@@ -94,7 +94,8 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 | Command                    | Description                                                        |
 | -------------------------- | ------------------------------------------------------------------ |
 | `gmt init`                 | Initialize a git repository                                        |
-| `gmt status`               | Enhanced git status (banner, box, color)                           |
+| `gmt remote-init`          | Add remote, set main branch, and push to origin main (interactive) |
+| `gmt st` or `gmt status`   | Enhanced git status (banner, box, color)                           |
 | `gmt save [message]`       | Stage all changes and commit (default: "savepoint")                |
 | `gmt undo`                 | Undo last commit (with confirmation)                               |
 | `gmt br` or `gmt branch`   | Interactive branch switcher (table, create, switch)                |
@@ -104,7 +105,9 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 | `gmt stash`                | Interactive stash manager (create, list, apply, drop, view)        |
 | `gmt smart`                | Smart contextual actions based on repo state                       |
 | `gmt ps [remote] [branch]` | Push current branch to remote, or specify remote and branch        |
-| `gmt remote-init`          | Add remote, set main branch, and push to origin main (interactive) |
+| `gmt rc-edit`              | Create or edit .gitmaterc shortcuts interactively                  |
+| `gmt <shortcut>`           | Run a custom shortcut from .gitmaterc                              |
+| `gmt l` or `gmt log`       | Pretty, colorized, paginated git log with commit details           |
 | `gmt help`                 | Show all commands and usage                                        |
 
 ---
@@ -151,7 +154,7 @@ package.json         # Project manifest
 
 ## 🛠️ Usage
 
-- `gitmate status` or `gmt status`  
+- `gitmate status`, `gmt status`, or `gmt st`  
   Shows enhanced git status (branch, ahead/behind, staged/changed files).
 
 - `gitmate save` or `gmt save`  
@@ -160,8 +163,11 @@ package.json         # Project manifest
 - `gitmate undo` or `gmt undo`  
   Prompts for confirmation, then undoes the last commit (soft reset).
 
-- `gitmate branch` or `gmt branch`  
+- `gitmate branch`, `gmt branch`, or `gmt br`  
   Interactive branch switcher. Select a branch to switch, or create a new one.
+
+- `gitmate log`, `gmt log`, or `gmt l`  
+  Pretty, colorized, paginated git log with commit details.
 
 ---
 

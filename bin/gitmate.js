@@ -109,8 +109,8 @@ program
   .action(rcEdit);
 
 program
-  .command('log')
-  .description('Pretty, colorized, paginated git log with commit details')
+  .command('l')
+  .description('Pretty, colorized, paginated git log with commit details (shortcut for log)')
   .action(logViewer);
 
 program
@@ -149,7 +149,7 @@ program
     console.log('  ' + cyan('help') + '                Show this help message');
     console.log('  rc-edit          Create or edit .gitmaterc shortcuts interactively');
     console.log('  <shortcut>       Run a custom shortcut from .gitmaterc');
-    console.log('  log             Pretty, colorized, paginated git log with commit details');
+    console.log('  l, log          Pretty, colorized, paginated git log with commit details');
     console.log('');
     console.log(yellow('EXAMPLES:'));
     console.log('  ' + white('gmt st'));
@@ -174,7 +174,7 @@ try {
   // If it's an unknown command, handle as shortcut
   const knownCommands = [
     'init', 'remote-init', 'st', 'status', 'save', 'undo', 'br', 'branch',
-    'del', 'db', 'delete-branch', 'stash', 'smart', 'ps', 'help', 'rc-edit', 'log'
+    'del', 'db', 'delete-branch', 'stash', 'smart', 'ps', 'help', 'rc-edit', 'log', 'l'
   ];
   const userCmd = process.argv[2];
   if (userCmd && !knownCommands.includes(userCmd)) {
