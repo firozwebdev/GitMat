@@ -9,6 +9,7 @@ const save = require("../src/commands/save");
 const undo = require("../src/commands/undo");
 const branch = require("../src/commands/branch");
 const init = require("../src/commands/init");
+const deleteBranch = require("../src/commands/delete-branch");
 
 program
   .name("gitmate")
@@ -40,6 +41,18 @@ program
   .action(init);
 
 program
+  .command("delete-branch")
+  .description("Interactively delete a local branch (excluding current)")
+  .action(deleteBranch);
+
+program
+  .command("db [branch]")
+  .description(
+    "Delete a local branch by name (with confirmation), or interactively if not specified"
+  )
+  .action((branch) => deleteBranch(branch));
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -60,6 +73,12 @@ program
     );
     console.log(
       "  init     Initialize a new git repository in the current directory"
+    );
+    console.log(
+      "  delete-branch   Interactively delete a local branch (excluding current)"
+    );
+    console.log(
+      "  db [branch]      Delete a local branch by name (with confirmation), or interactively if not specified"
     );
     console.log("  help     Show this help message");
     console.log("\nExamples:");
