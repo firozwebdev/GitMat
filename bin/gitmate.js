@@ -13,6 +13,7 @@ const deleteBranch = require("../src/commands/delete-branch");
 const stash = require("../src/commands/stash");
 const smart = require("../src/commands/smart");
 const push = require("../src/commands/push");
+const remoteInit = require("../src/commands/remote-init");
 
 program
   .name("gitmate")
@@ -85,6 +86,13 @@ program
   .action((remote, branch) => push(remote, branch));
 
 program
+  .command("remote-init")
+  .description(
+    "Add remote, set main branch, and push to origin main (interactive)"
+  )
+  .action(remoteInit);
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -127,6 +135,9 @@ program
     );
     console.log(
       "  ps [remote] [branch]  Push current branch to remote, or specify remote and branch"
+    );
+    console.log(
+      "  remote-init      Add remote, set main branch, and push to origin main"
     );
     console.log("  help     Show this help message");
     console.log("\nExamples:");

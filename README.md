@@ -1,17 +1,17 @@
 # GitMate
 
-> **Tip:** For faster usage, set up a `gm` alias for `gitmate` in your terminal! See below for how to make it permanent.
+> **Tip:** For faster usage, set up a `gmt` alias for `gitmate` in your terminal! See below for how to make it permanent.
 
 Your smart Git companion – making Git easier, faster, and more human-friendly.
 
 ---
 
-## 🚀 Quick Alias: Use `gm` Instead of `gitmate`
+## 🚀 Quick Alias: Use `gmt` Instead of `gitmate`
 
 ### **Temporary (per session):**
 
 ```powershell
-Set-Alias gm gitmate
+Set-Alias gmt gitmate
 ```
 
 ### **Permanent (all PowerShell sessions):**
@@ -23,9 +23,9 @@ Set-Alias gm gitmate
    ```
 2. Add this line to the file:
    ```powershell
-   Set-Alias gm gitmate
+   Set-Alias gmt gitmate
    ```
-3. Save and close. Restart PowerShell. Now you can use `gm` in any session!
+3. Save and close. Restart PowerShell. Now you can use `gmt` in any session!
 
 ---
 
@@ -42,11 +42,59 @@ Set-Alias gm gitmate
 
 ## 🚀 Features (POC)
 
-- Enhanced status summary: `gitmate status` / `gm status`
-- Quick savepoint commit: `gitmate save` / `gm save`
-- Undo last commit (with confirmation): `gitmate undo` / `gm undo`
-- Interactive branch switcher: `gitmate branch` / `gm branch`
-- (Alias: You can use `gm` instead of `gitmate` for all commands)
+- Enhanced status summary: `gitmate status` / `gmt status`
+- Quick savepoint commit: `gitmate save` / `gmt save`
+- Undo last commit (with confirmation): `gitmate undo` / `gmt undo`
+- Interactive branch switcher: `gitmate branch` / `gmt branch`
+- (Alias: You can use `gmt` instead of `gitmate` for all commands)
+
+---
+
+## 🖥️ Cross-Platform Alias Script (gmt)
+
+To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two scripts:
+
+- `bin/gmt` (for Linux/macOS/Unix)
+- `bin/gmt.cmd` (for Windows)
+
+### **How to use:**
+
+#### **On Linux/macOS/Unix:**
+
+1. Copy `bin/gmt` to a directory in your PATH (e.g., `/usr/local/bin`):
+   ```sh
+   cp bin/gmt /usr/local/bin/gmt
+   chmod +x /usr/local/bin/gmt
+   ```
+2. Now you can use `gmt` in any terminal.
+
+#### **On Windows:**
+
+1. Copy `bin/gmt.cmd` to a directory in your PATH (e.g., `C:\Windows` or another folder in your PATH):
+   ```cmd
+   copy bin\gmt.cmd C:\Windows\gmt.cmd
+   ```
+2. Now you can use `gmt` in any Command Prompt or PowerShell.
+
+---
+
+## 🛠️ Commands & Usage
+
+| Command                    | Description                                                        |
+| -------------------------- | ------------------------------------------------------------------ |
+| `gmt init`                 | Initialize a git repository                                        |
+| `gmt status`               | Enhanced git status (banner, box, color)                           |
+| `gmt save [message]`       | Stage all changes and commit (default: "savepoint")                |
+| `gmt undo`                 | Undo last commit (with confirmation)                               |
+| `gmt br` or `gmt branch`   | Interactive branch switcher (table, create, switch)                |
+| `gmt del [branch]`         | Delete a branch by name (with confirmation)                        |
+| `gmt db [branch]`          | Delete a branch by name (with confirmation)                        |
+| `gmt delete-branch`        | Interactively delete a branch                                      |
+| `gmt stash`                | Interactive stash manager (create, list, apply, drop, view)        |
+| `gmt smart`                | Smart contextual actions based on repo state                       |
+| `gmt ps [remote] [branch]` | Push current branch to remote, or specify remote and branch        |
+| `gmt remote-init`          | Add remote, set main branch, and push to origin main (interactive) |
+| `gmt help`                 | Show all commands and usage                                        |
 
 ---
 
@@ -57,12 +105,19 @@ Set-Alias gm gitmate
 README.md
 bin/
   gitmate.js         # CLI entry point
+  gmt                # Unix shortcut script
+  gmt.cmd            # Windows shortcut script
 src/
   commands/
     status.js        # Enhanced status command
     save.js          # Savepoint commit command
     undo.js          # Undo last commit command
     branch.js        # Interactive branch switcher
+    delete-branch.js # Branch deletion command
+    stash.js         # Stash management command
+    smart.js         # Smart contextual actions
+    push.js          # Push command
+    remote-init.js   # Remote setup and push command
 package.json         # Project manifest
 ```
 
@@ -79,26 +134,22 @@ package.json         # Project manifest
    npm link
    ```
 3. **(Optional) Set up alias for easier use:**
-   In PowerShell:
-   ```powershell
-   Set-Alias gm gitmate
-   ```
-   Now you can use `gm` instead of `gitmate`.
+   See above for alias instructions.
 
 ---
 
 ## 🛠️ Usage
 
-- `gitmate status` or `gm status`  
+- `gitmate status` or `gmt status`  
   Shows enhanced git status (branch, ahead/behind, staged/changed files).
 
-- `gitmate save` or `gm save`  
+- `gitmate save` or `gmt save`  
   Stages all changes and commits with the message "savepoint".
 
-- `gitmate undo` or `gm undo`  
+- `gitmate undo` or `gmt undo`  
   Prompts for confirmation, then undoes the last commit (soft reset).
 
-- `gitmate branch` or `gm branch`  
+- `gitmate branch` or `gmt branch`  
   Interactive branch switcher. Select a branch to switch, or create a new one.
 
 ---
@@ -117,7 +168,7 @@ The following files/folders are ignored:
 
 ## 🏗️ Next Steps
 
-- Add more commands: `stash`, `smart`, etc.
+- Add more commands or shortcuts as needed
 - Support for `.gitmaterc` config
 - TUI dashboard (with Ink)
 - Packaging and publishing
@@ -130,34 +181,9 @@ The following files/folders are ignored:
 - [commander](https://www.npmjs.com/package/commander)
 - [inquirer](https://www.npmjs.com/package/inquirer)
 - [chalk](https://www.npmjs.com/package/chalk)
+- [boxen](https://www.npmjs.com/package/boxen)
+- [cli-table3](https://www.npmjs.com/package/cli-table3)
+- [figlet](https://www.npmjs.com/package/figlet)
 - [Lazygit](https://github.com/jesseduffield/lazygit)
-
----
-
-## 🖥️ Cross-Platform Alias Script (gm)
-
-To use `gm` as a shortcut for `gitmate` on any OS, this project provides two scripts:
-
-- `bin/gm` (for Linux/macOS/Unix)
-- `bin/gm.cmd` (for Windows)
-
-### **How to use:**
-
-#### **On Linux/macOS/Unix:**
-
-1. Copy `bin/gm` to a directory in your PATH (e.g., `/usr/local/bin`):
-   ```sh
-   cp bin/gm /usr/local/bin/gm
-   chmod +x /usr/local/bin/gm
-   ```
-2. Now you can use `gm` in any terminal.
-
-#### **On Windows:**
-
-1. Copy `bin/gm.cmd` to a directory in your PATH (e.g., `C:\Windows` or another folder in your PATH):
-   ```cmd
-   copy bin\gm.cmd C:\Windows\gm.cmd
-   ```
-2. Now you can use `gm` in any Command Prompt or PowerShell.
 
 ---
