@@ -1,7 +1,7 @@
-import simpleGit from "simple-git";
-import chalk from "chalk";
 import boxen from "boxen";
+import chalk from "chalk";
 import Table from "cli-table3";
+import simpleGit from "simple-git";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
@@ -9,6 +9,7 @@ async function getInquirer() {
 }
 
 export default async function branch() {
+  const inquirer = await getInquirer();
   const git = simpleGit();
   const branchSummary = await git.branchLocal();
   const branches = branchSummary.all;
@@ -199,26 +200,28 @@ export default async function branch() {
         })
       );
     }
-  } else {
-    try {
-      await git.checkout(selected);
-      console.log(
-        boxen(chalk.green(`✔ Switched to branch '${selected}'`), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "green",
-          margin: 1,
-        })
-      );
-    } catch (err) {
-      console.error(
-        boxen(chalk.red("Error switching branch:") + err.message, {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "red",
-          margin: 1,
-        })
-      );
-    }
+    return;
+  }
+
+  // Switch to selected branch
+  try {
+    await git.checkout(selected);
+    console.log(
+      boxen(chalk.green(`✔ Switched to branch '${selected}'`), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      })
+    );
+  } catch (err) {
+    console.error(
+      boxen(chalk.red("Error switching branch:") + err.message, {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "red",
+        margin: 1,
+      })
+    );
   }
 }
