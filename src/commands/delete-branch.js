@@ -1,5 +1,6 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import Table from "cli-table3";
 import simpleGit from "simple-git";
 import history from "./history.js";
 let inquirer;
@@ -8,6 +9,7 @@ async function getInquirer() {
   return inquirer;
 }
 export default async function deleteBranch(branchArg) {
+  const inquirer = await getInquirer();
   const git = simpleGit();
   try {
     const branchSummary = await git.branchLocal();
