@@ -53,6 +53,13 @@ program
   .action((branch) => deleteBranch(branch));
 
 program
+  .command("del [branch]")
+  .description(
+    "Delete a local branch by name (with confirmation), or interactively if not specified"
+  )
+  .action((branch) => deleteBranch(branch));
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -79,6 +86,9 @@ program
     );
     console.log(
       "  db [branch]      Delete a local branch by name (with confirmation), or interactively if not specified"
+    );
+    console.log(
+      "  del [branch]      Delete a local branch by name (with confirmation), or interactively if not specified"
     );
     console.log("  help     Show this help message");
     console.log("\nExamples:");
