@@ -91,24 +91,32 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 
 ## 🛠️ Commands & Usage
 
-| Command                    | Description                                                        |
-| -------------------------- | ------------------------------------------------------------------ |
-| `gmt init`                 | Initialize a git repository                                        |
-| `gmt remote-init`          | Add remote, set main branch, and push to origin main (interactive) |
-| `gmt st` or `gmt status`   | Enhanced git status (banner, box, color)                           |
-| `gmt save [message]`       | Stage all changes and commit (default: "savepoint")                |
-| `gmt undo`                 | Undo last commit (with confirmation)                               |
-| `gmt br` or `gmt branch`   | Interactive branch switcher (table, create, switch)                |
-| `gmt del [branch]`         | Delete a branch by name (with confirmation)                        |
-| `gmt db [branch]`          | Delete a branch by name (with confirmation)                        |
-| `gmt delete-branch`        | Interactively delete a branch                                      |
-| `gmt stash`                | Interactive stash manager (create, list, apply, drop, view)        |
-| `gmt smart`                | Smart contextual actions based on repo state                       |
-| `gmt ps [remote] [branch]` | Push current branch to remote, or specify remote and branch        |
-| `gmt rc-edit`              | Create or edit .gitmaterc shortcuts interactively                  |
-| `gmt <shortcut>`           | Run a custom shortcut from .gitmaterc                              |
-| `gmt l` or `gmt log`       | Pretty, colorized, paginated git log with commit details           |
-| `gmt help`                 | Show all commands and usage                                        |
+| Command                                   | Description                                                        | Bengali Translation                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `gmt init`                                | Initialize a git repository                                        | গিট রিপোজিটরি ইনিয়ালাইজ করুন                                           |
+| `gmt remote-init`                         | Add remote, set main branch, and push to origin main (interactive) | রিমোট যোগ করুন, মুনি ব্রাঞ্চ সেট করুন এবং প্রাথমিক পুশ করুন             |
+| `gmt st` or `gmt status`                  | Enhanced git status (banner, box, color)                           | গিট স্ট্যাটাস দেখান                                                     |
+| `gmt save [message]`                      | Stage all changes and commit (default: "savepoint")                | সব পরিবর্তন স্ট্যাজ এবং কমিট করুন (ডিফল্ট: "স্যাভপাউন্ট")               |
+| `gmt undo`                                | Undo last commit (with confirmation)                               | শেষ কমিট ফিরান                                                          |
+| `gmt br` or `gmt branch`                  | Interactive branch switcher (table, create, switch)                | ইন্টারেক্টিভ ব্রাঞ্চ স্যাচার                                            |
+| `gmt del [branch]`                        | Delete a branch by name (with confirmation)                        | নাম দিয়ে ব্রাঞ্চ মুছা                                                  |
+| `gmt db [branch]`                         | Delete a branch by name (with confirmation)                        | নাম দিয়ে ব্রাঞ্চ মুছা                                                  |
+| `gmt delete-branch`                       | Interactively delete a branch                                      | ইন্টারেক্টিভভাবে ব্রাঞ্চ মুছা                                           |
+| `gmt stash`                               | Interactive stash manager (create, list, apply, drop, view)        | ইন্টারেক্টিভ স্ট্যাশ ম্যানেজার                                          |
+| `gmt smart`                               | Smart contextual actions based on repo state                       | রিপোজিটরি স্টেট ভিত্তিতে সম্পদ করুন                                     |
+| `gmt ps [remote] [branch]`                | Push current branch to remote, or specify remote and branch        | বর্তমান ব্রাঞ্চ রিমোটে পুশ করুন অথবা রিমোট এবং ব্রাঞ্চ নির্দিষ্ট করুন   |
+| `gmt rc-edit`                             | Create or edit .gitmaterc shortcuts interactively                  | .gitmaterc সংক্ষিপ্ত করুন বা ইন্টারেক্টিভভাবে সংক্ষিপ্ত স্যাটার সম্পাদন |
+| `gmt <shortcut>`                          | Run a custom shortcut from .gitmaterc                              | .gitmaterc থেকে একটি কাস্টম স্যাটার চালান                               |
+| `gmt l` or `gmt log`                      | Pretty, colorized, paginated git log with commit details           | প্রাসান্ন, কলর কলর প্যাগিনেটেড গিট লগ দেখান                             |
+| `gmt help`                                | Show all commands and usage                                        | সব কমান্ড এবং ব্যবহার দেখান                                             |
+| `gmt psf`                                 | Force push (git push --force)                                      | সাধারন জোর করে পুশ                                                      |
+| `gmt psfl`                                | Force push with lease (git push --force-with-lease)                | নিরাপদ জোর করে পুশ                                                      |
+| `gmt psa`                                 | Push all branches (git push --all origin)                          | সব ব্রাঞ্চ পুশ                                                          |
+| `gmt pst`                                 | Push all tags (git push --tags)                                    | সব ট্যাগ পুশ                                                            |
+| `gmt psd <branch>`                        | Delete remote branch (git push origin --delete <branch>)           | রিমোট থেকে ব্রাঞ্চ মুছা                                                 |
+| `gmt unst <file>` or `gmt unstage <file>` | Unstage a file (git reset HEAD <file>)                             | স্টেজ থেকে আনস্টেজ করতে                                                 |
+| `gmt reha` or `gmt reset-hard`            | Hard reset to previous commit (git reset --hard HEAD~1)            | সব কিছু আগের কমিটে ফিরিয়ে নিতে                                          |
+| `gmt rere` or `gmt reset-recover`         | Recover from bad reset (git reset --hard ORIG_HEAD)                | ভুল reset ফিরিয়ে আনতে                                                   |
 
 ---
 
@@ -168,6 +176,30 @@ package.json         # Project manifest
 
 - `gitmate log`, `gmt log`, or `gmt l`  
   Pretty, colorized, paginated git log with commit details.
+
+- `gmt psf`  
+  Force push (git push --force) | সাধারন জোর করে পুশ
+
+- `gmt psfl`  
+  Force push with lease (git push --force-with-lease) | নিরাপদ জোর করে পুশ
+
+- `gmt psa`  
+  Push all branches (git push --all origin) | সব ব্রাঞ্চ পুশ
+
+- `gmt pst`  
+  Push all tags (git push --tags) | সব ট্যাগ পুশ
+
+- `gmt psd <branch>`  
+  Delete remote branch (git push origin --delete <branch>) | রিমোট থেকে ব্রাঞ্চ মুছা
+
+- `gmt unst <file>`, `gmt unstage <file>`  
+  Unstage a file (git reset HEAD <file>) | স্টেজ থেকে আনস্টেজ করতে
+
+- `gmt reha`, `gmt reset-hard`  
+  Hard reset to previous commit (git reset --hard HEAD~1) | সব কিছু আগের কমিটে ফিরিয়ে নিতে
+
+- `gmt rere`, `gmt reset-recover`  
+  Recover from bad reset (git reset --hard ORIG_HEAD) | ভুল reset ফিরিয়ে আনতে
 
 ---
 

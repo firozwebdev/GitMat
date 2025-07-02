@@ -18,6 +18,14 @@ const push = require("../src/commands/push");
 const remoteInit = require("../src/commands/remote-init");
 const rcEdit = require('../src/commands/rc-edit');
 const logViewer = require('../src/commands/log');
+const psf = require('../src/commands/psf'); // সাধারন জোর করে পুশ
+const psfl = require('../src/commands/psfl'); // নিরাপদ জোর করে পুশ
+const psa = require('../src/commands/psa'); // সব ব্রাঞ্চ পুশ
+const pst = require('../src/commands/pst'); // সব ট্যাগ পুশ
+const psd = require('../src/commands/psd'); // রিমোট থেকে ব্রাঞ্চ মুছা
+const unstage = require('../src/commands/unstage'); // স্টেজ থেকে আনস্টেজ করতে
+const resetHard = require('../src/commands/reset-hard'); // সব কিছু আগের কমিটে ফিরিয়ে নিতে
+const resetRecover = require('../src/commands/reset-recover'); // ভুল reset ফিরিয়ে আনতে
 
 program
   .name("gitmate")
@@ -114,6 +122,40 @@ program
   .action(logViewer);
 
 program
+  .command('psf')
+  .description('Force push (git push --force) | সাধারন জোর করে পুশ')
+  .action(psf);
+program
+  .command('psfl')
+  .description('Force push with lease (git push --force-with-lease) | নিরাপদ জোর করে পুশ')
+  .action(psfl);
+program
+  .command('psa')
+  .description('Push all branches (git push --all origin) | সব ব্রাঞ্চ পুশ')
+  .action(psa);
+program
+  .command('pst')
+  .description('Push all tags (git push --tags) | সব ট্যাগ পুশ')
+  .action(pst);
+program
+  .command('psd <branch>')
+  .description('Delete remote branch (git push origin --delete <branch>) | রিমোট থেকে ব্রাঞ্চ মুছা')
+  .action(psd);
+
+program
+  .command('unst <file>')
+  .description('Unstage a file (git reset HEAD <file>) | স্টেজ থেকে আনস্টেজ করতে (shortcut for unstage)')
+  .action(unstage);
+program
+  .command('reha')
+  .description('Hard reset to previous commit (git reset --hard HEAD~1) | সব কিছু আগের কমিটে ফিরিয়ে নিতে (shortcut for reset-hard)')
+  .action(resetHard);
+program
+  .command('rere')
+  .description('Recover from bad reset (git reset --hard ORIG_HEAD) | ভুল reset ফিরিয়ে আনতে (shortcut for reset-recover)')
+  .action(resetRecover);
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -162,6 +204,14 @@ program
     console.log('  ' + white('gmt remote-init'));
     console.log('');
     console.log(magenta('For more details, see the README.md.'));
+    console.log('  psf             Force push (git push --force) | সাধারন জোর করে পুশ');
+    console.log('  psfl            Force push with lease (git push --force-with-lease) | নিরাপদ জোর করে পুশ');
+    console.log('  psa             Push all branches (git push --all origin) | সব ব্রাঞ্চ পুশ');
+    console.log('  pst             Push all tags (git push --tags) | সব ট্যাগ পুশ');
+    console.log('  psd <branch>    Delete remote branch (git push origin --delete <branch>) | রিমোট থেকে ব্রাঞ্চ মুছা');
+    console.log('  unst <file>, unstage <file>   Unstage a file (git reset HEAD <file>) | স্টেজ থেকে আনস্টেজ করতে');
+    console.log('  reha, reset-hard              Hard reset to previous commit (git reset --hard HEAD~1) | সব কিছু আগের কমিটে ফিরিয়ে নিতে');
+    console.log('  rere, reset-recover           Recover from bad reset (git reset --hard ORIG_HEAD) | ভুল reset ফিরিয়ে আনতে');
   });
 
 // TODO: Add more commands here
@@ -174,7 +224,7 @@ try {
   // If it's an unknown command, handle as shortcut
   const knownCommands = [
     'init', 'remote-init', 'st', 'status', 'save', 'undo', 'br', 'branch',
-    'del', 'db', 'delete-branch', 'stash', 'smart', 'ps', 'help', 'rc-edit', 'log', 'l'
+    'del', 'db', 'delete-branch', 'stash', 'smart', 'ps', 'psf', 'psfl', 'psa', 'pst', 'psd', 'unst', 'unstage', 'reha', 'reset-hard', 'rere', 'reset-recover', 'help', 'rc-edit', 'log', 'l'
   ];
   const userCmd = process.argv[2];
   if (userCmd && !knownCommands.includes(userCmd)) {
