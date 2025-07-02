@@ -117,42 +117,78 @@ program
   .action(rcEdit);
 
 program
-  .command('l')
-  .description('Pretty, colorized, paginated git log with commit details (shortcut for log)')
-  .action(logViewer);
+  .command('log')
+  .description('Pretty, colorized, paginated git log with commit details (alias for l)')
+  .action(() => logViewer());
+program
+  .command('lo')
+  .description('Show git log --oneline (shortcut for log oneline)')
+  .action(() => logViewer({ mode: 'oneline' }));
+program
+  .command('log-graph')
+  .description('Show git log --oneline --graph --all')
+  .action(() => logViewer({ mode: 'graph' }));
+program
+  .command('log-file <filename>')
+  .description('Show git log for a specific file')
+  .action((filename) => logViewer({ mode: 'file', filename }));
+program
+  .command('log-since <time>')
+  .description('Show git log --since="<time>"')
+  .action((time) => logViewer({ mode: 'since', time }));
+program
+  .command('log-author <author>')
+  .description('Show git log --author="<author>"')
+  .action((author) => logViewer({ mode: 'author', author }));
+program
+  .command('log-name-only')
+  .description('Show git log --name-only')
+  .action(() => logViewer({ mode: 'name-only' }));
+program
+  .command('ldi')
+  .description('Show git log -p')
+  .action(() => logViewer({ mode: 'diff' }));
+program
+  .command('log-limit <n>')
+  .description('Show git log -n <n>')
+  .action((n) => logViewer({ mode: 'limit', n }));
+program
+  .command('log-format <format>')
+  .description('Show git log --pretty=format:"<format>"')
+  .action((format) => logViewer({ mode: 'format', format }));
 
 program
   .command('psf')
-  .description('Force push (git push --force) | সাধারন জোর করে পুশ')
+  .description('Force push (git push --force)')
   .action(psf);
 program
   .command('psfl')
-  .description('Force push with lease (git push --force-with-lease) | নিরাপদ জোর করে পুশ')
+  .description('Force push with lease (git push --force-with-lease)')
   .action(psfl);
 program
   .command('psa')
-  .description('Push all branches (git push --all origin) | সব ব্রাঞ্চ পুশ')
+  .description('Push all branches (git push --all origin)')
   .action(psa);
 program
   .command('pst')
-  .description('Push all tags (git push --tags) | সব ট্যাগ পুশ')
+  .description('Push all tags (git push --tags)')
   .action(pst);
 program
   .command('psd <branch>')
-  .description('Delete remote branch (git push origin --delete <branch>) | রিমোট থেকে ব্রাঞ্চ মুছা')
+  .description('Delete remote branch (git push origin --delete <branch>)')
   .action(psd);
 
 program
   .command('unst <file>')
-  .description('Unstage a file (git reset HEAD <file>) | স্টেজ থেকে আনস্টেজ করতে (shortcut for unstage)')
+  .description('Unstage a file (git reset HEAD <file>)')
   .action(unstage);
 program
   .command('reha')
-  .description('Hard reset to previous commit (git reset --hard HEAD~1) | সব কিছু আগের কমিটে ফিরিয়ে নিতে (shortcut for reset-hard)')
+  .description('Hard reset to previous commit (git reset --hard HEAD~1)')
   .action(resetHard);
 program
   .command('rere')
-  .description('Recover from bad reset (git reset --hard ORIG_HEAD) | ভুল reset ফিরিয়ে আনতে (shortcut for reset-recover)')
+  .description('Recover from bad reset (git reset --hard ORIG_HEAD)')
   .action(resetRecover);
 
 program
@@ -191,7 +227,9 @@ program
     console.log('  ' + cyan('help') + '                Show this help message');
     console.log('  rc-edit          Create or edit .gitmaterc shortcuts interactively');
     console.log('  <shortcut>       Run a custom shortcut from .gitmaterc');
-    console.log('  l, log          Pretty, colorized, paginated git log with commit details');
+    console.log('  l, log                Pretty, colorized, paginated git log with commit details');
+    console.log('  lo, log oneline        Show git log --oneline (one-line log)');
+    console.log('  ldi, log diff          Show git log -p (log with diffs)');
     console.log('');
     console.log(yellow('EXAMPLES:'));
     console.log('  ' + white('gmt st'));
@@ -204,14 +242,14 @@ program
     console.log('  ' + white('gmt remote-init'));
     console.log('');
     console.log(magenta('For more details, see the README.md.'));
-    console.log('  psf             Force push (git push --force) | সাধারন জোর করে পুশ');
-    console.log('  psfl            Force push with lease (git push --force-with-lease) | নিরাপদ জোর করে পুশ');
-    console.log('  psa             Push all branches (git push --all origin) | সব ব্রাঞ্চ পুশ');
-    console.log('  pst             Push all tags (git push --tags) | সব ট্যাগ পুশ');
-    console.log('  psd <branch>    Delete remote branch (git push origin --delete <branch>) | রিমোট থেকে ব্রাঞ্চ মুছা');
-    console.log('  unst <file>, unstage <file>   Unstage a file (git reset HEAD <file>) | স্টেজ থেকে আনস্টেজ করতে');
-    console.log('  reha, reset-hard              Hard reset to previous commit (git reset --hard HEAD~1) | সব কিছু আগের কমিটে ফিরিয়ে নিতে');
-    console.log('  rere, reset-recover           Recover from bad reset (git reset --hard ORIG_HEAD) | ভুল reset ফিরিয়ে আনতে');
+    console.log('  psf             Force push (git push --force)');
+    console.log('  psfl            Force push with lease (git push --force-with-lease)');
+    console.log('  psa             Push all branches (git push --all origin)');
+    console.log('  pst             Push all tags (git push --tags)');
+    console.log('  psd <branch>    Delete remote branch (git push origin --delete <branch>)');
+    console.log('  unst <file>, unstage <file>   Unstage a file (git reset HEAD <file>)');
+    console.log('  reha, reset-hard              Hard reset to previous commit (git reset --hard HEAD~1)');
+    console.log('  rere, reset-recover           Recover from bad reset (git reset --hard ORIG_HEAD)');
   });
 
 // TODO: Add more commands here

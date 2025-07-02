@@ -4,19 +4,70 @@ const chalk = require("chalk");
 const boxen = require("boxen");
 const Table = require("cli-table3");
 
-module.exports = async function logViewer() {
+module.exports = async function logViewer(opts = {}) {
   const git = simpleGit();
   let log;
+  const chalkBox = (msg, color = "cyan", title = "", borderColor = "cyan") =>
+    boxen(msg, {
+      padding: 1,
+      borderStyle: "round",
+      borderColor,
+      margin: 1,
+      title,
+      titleAlignment: "center",
+    });
+
+  // Handle new modes
+  if (opts.mode) {
+    let cmd = ["log"];
+    if (opts.mode === "oneline") cmd.push("--oneline");
+    else if (opts.mode === "graph") cmd.push("--oneline", "--graph", "--all");
+    else if (opts.mode === "file" && opts.filename) cmd.push(opts.filename);
+    else if (opts.mode === "since" && opts.time)
+      cmd.push(`--since="${opts.time}"`);
+    else if (opts.mode === "author" && opts.author)
+      cmd.push(`--author="${opts.author}"`);
+    else if (opts.mode === "name-only") cmd.push("--name-only");
+    else if (opts.mode === "diff") cmd.push("-p");
+    else if (opts.mode === "limit" && opts.n) cmd.push(`-n`, String(opts.n));
+    else if (opts.mode === "format" && opts.format)
+      cmd.push(`--pretty=format:${opts.format}`);
+    else cmd = null;
+    if (cmd) {
+      try {
+        const { stdout } = await git.raw(cmd);
+        console.log(
+          chalkBox(
+            chalk.white(stdout.length ? stdout : "No log output."),
+            "cyan",
+            "Git Log",
+            "cyan"
+          )
+        );
+      } catch (err) {
+        console.error(
+          chalkBox(
+            chalk.red("Error running git log: ") + err.message,
+            "red",
+            "Error",
+            "red"
+          )
+        );
+      }
+      return;
+    }
+  }
+
   try {
     log = await git.log({ n: 50 }); // Fetch up to 50 commits
   } catch (err) {
     console.error(
-      boxen(chalk.red("Error reading git log: ") + err.message, {
-        padding: 1,
-        borderStyle: "round",
-        borderColor: "red",
-        margin: 1,
-      })
+      chalkBox(
+        chalk.red("Error reading git log: ") + err.message,
+        "red",
+        "Error",
+        "red"
+      )
     );
     return;
   }
@@ -51,14 +102,12 @@ module.exports = async function logViewer() {
       ]);
     }
     console.log(
-      boxen(table.toString(), {
-        padding: 1,
-        borderStyle: "round",
-        borderColor: "cyan",
-        margin: 1,
-        title: `Git Log [${start + 1}-${end} of ${commits.length}]`,
-        titleAlignment: "center",
-      })
+      chalkBox(
+        table.toString(),
+        "cyan",
+        `Git Log [${start + 1}-${end} of ${commits.length}]`,
+        "cyan"
+      )
     );
 
     const choices = [];
@@ -113,14 +162,7 @@ module.exports = async function logViewer() {
         msg += "\n" + chalk.red("Error loading diff: ") + err.message;
       }
       console.log(
-        boxen(msg, {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "magenta",
-          margin: 1,
-          title: `Commit Details #${action + 1}`,
-          titleAlignment: "center",
-        })
+        chalkBox(msg, "magenta", `Commit Details #${action + 1}`, "magenta")
       );
       // Wait for user to continue
       await inquirer.prompt([

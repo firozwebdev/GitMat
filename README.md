@@ -107,7 +107,9 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 | `gmt ps [remote] [branch]`                | Push current branch to remote, or specify remote and branch        | বর্তমান ব্রাঞ্চ রিমোটে পুশ করুন অথবা রিমোট এবং ব্রাঞ্চ নির্দিষ্ট করুন   |
 | `gmt rc-edit`                             | Create or edit .gitmaterc shortcuts interactively                  | .gitmaterc সংক্ষিপ্ত করুন বা ইন্টারেক্টিভভাবে সংক্ষিপ্ত স্যাটার সম্পাদন |
 | `gmt <shortcut>`                          | Run a custom shortcut from .gitmaterc                              | .gitmaterc থেকে একটি কাস্টম স্যাটার চালান                               |
-| `gmt l` or `gmt log`                      | Pretty, colorized, paginated git log with commit details           | প্রাসান্ন, কলর কলর প্যাগিনেটেড গিট লগ দেখান                             |
+| `gmt l`, `gmt log`                        | Pretty, colorized, paginated git log with commit details           | প্রাসান্ন, কলর কলর প্যাগিনেটেড গিট লগ দেখান                             |
+| `gmt lo`, `gmt log oneline`               | Show git log --oneline (one-line log)                              | এক লাইনে লগ দেখান                                                       |
+| `gmt ldi`, `gmt log diff`                 | Show git log -p (log with diffs)                                   | ডিফ সহ লগ দেখান                                                         |
 | `gmt help`                                | Show all commands and usage                                        | সব কমান্ড এবং ব্যবহার দেখান                                             |
 | `gmt psf`                                 | Force push (git push --force)                                      | সাধারন জোর করে পুশ                                                      |
 | `gmt psfl`                                | Force push with lease (git push --force-with-lease)                | নিরাপদ জোর করে পুশ                                                      |
