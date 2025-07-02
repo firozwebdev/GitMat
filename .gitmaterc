@@ -1,6 +1,6 @@
 {
   "shortcuts": {
     "out": "git status",
-    "home": "git status"
+    "message": "git status"
   }
 }
