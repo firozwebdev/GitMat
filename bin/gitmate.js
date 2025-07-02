@@ -12,6 +12,7 @@ const init = require("../src/commands/init");
 const deleteBranch = require("../src/commands/delete-branch");
 const stash = require("../src/commands/stash");
 const smart = require("../src/commands/smart");
+const push = require("../src/commands/push");
 
 program
   .name("gitmate")
@@ -77,6 +78,13 @@ program
   .action(smart);
 
 program
+  .command("ps [remote] [branch]")
+  .description(
+    "Push current branch to remote, or specify remote and branch (e.g., gmt ps origin main)"
+  )
+  .action((remote, branch) => push(remote, branch));
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -116,6 +124,9 @@ program
     );
     console.log(
       "  smart           Smart contextual actions based on repo state"
+    );
+    console.log(
+      "  ps [remote] [branch]  Push current branch to remote, or specify remote and branch"
     );
     console.log("  help     Show this help message");
     console.log("\nExamples:");
