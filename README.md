@@ -70,11 +70,22 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 
 #### **On Windows:**
 
-1. Copy `bin/gmt.cmd` to a directory in your PATH (e.g., `C:\Windows` or another folder in your PATH):
+1. Copy `bin/gmt.cmd` to a directory that is already in your PATH (e.g., `C:\Windows`).
+
    ```cmd
    copy bin\gmt.cmd C:\Windows\gmt.cmd
    ```
-2. Now you can use `gmt` in any Command Prompt or PowerShell.
+
+   Now you can use `gmt` in any Command Prompt or PowerShell.
+
+2. **If you want to use a custom directory (e.g., your own tools folder or your project bin):**
+   - For example, to use your project bin folder: `D:\current workings\gitMate\bin`
+   - Add that folder to your system PATH:
+     1. Open System Properties → Advanced → Environment Variables.
+     2. Under "System variables", find `Path`, select it, and click "Edit".
+     3. Click "New" and add the full path: `D:\current workings\gitMate\bin`
+     4. Click OK to save. Restart your terminal.
+   - Now you can use `gmt` in any Command Prompt or PowerShell, from any directory.
 
 ---
 
