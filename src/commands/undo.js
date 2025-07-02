@@ -2,9 +2,157 @@ const simpleGit = require("simple-git");
 const inquirer = require("inquirer");
 const chalk = require("chalk");
 const boxen = require("boxen");
+const history = require("./history");
 
 module.exports = async function undo() {
   const git = simpleGit();
+  const last = history.getLastAction();
+  if (!last) {
+    console.log(boxen(chalk.yellow("No actions to undo."), {
+      padding: 1,
+      borderStyle: "round",
+      borderColor: "yellow",
+      margin: 1,
+    }));
+    return;
+  }
+  if (last.type === "branch-delete") {
+    const { confirm } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "confirm",
+        message: `Restore deleted branch '${last.branch}' at ${last.hash.substr(0,7)}?`,
+        default: true,
+      },
+    ]);
+    if (!confirm) return;
+    try {
+      await git.raw(["branch", last.branch, last.hash]);
+      history.popLastAction();
+      history.addUndone(last);
+      console.log(boxen(chalk.green(`✔ Branch '${last.branch}' restored at ${last.hash.substr(0,7)}`), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      }));
+    } catch (err) {
+      console.error(boxen(chalk.red("Error restoring branch: ") + err.message, {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "red",
+        margin: 1,
+      }));
+    }
+    return;
+  }
+  if (last.type === "tag-delete") {
+    const { confirm } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "confirm",
+        message: `Re-create deleted tag '${last.tag}' at ${last.hash.substr(0,7)}?`,
+        default: true,
+      },
+    ]);
+    if (!confirm) return;
+    try {
+      await git.raw(["tag", last.tag, last.hash]);
+      history.popLastAction();
+      history.addUndone(last);
+      console.log(boxen(chalk.green(`✔ Tag '${last.tag}' re-created at ${last.hash.substr(0,7)}`), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      }));
+    } catch (err) {
+      console.error(boxen(chalk.red("Error re-creating tag: ") + err.message, {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "red",
+        margin: 1,
+      }));
+    }
+    return;
+  }
+  if (last.type === "stash-pop" || last.type === "stash-drop") {
+    const { confirm } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "confirm",
+        message: `Re-create stash with message: '${last.message}'?`,
+        default: true,
+      },
+    ]);
+    if (!confirm) return;
+    try {
+      // Apply patch and create stash
+      await git.raw(["apply", "--index"], { input: last.patch });
+      await git.stash(["push", "-m", last.message]);
+      history.popLastAction();
+      history.addUndone(last);
+      console.log(boxen(chalk.green(`✔ Stash re-created: '${last.message}'`), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      }));
+    } catch (err) {
+      console.error(boxen(chalk.red("Error re-creating stash: ") + err.message, {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "red",
+        margin: 1,
+      }));
+    }
+    return;
+  }
+  if (last.type === "reset-hard") {
+    const { confirm } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "confirm",
+        message: `Undo hard reset? Reset back to ${last.from.substr(0,7)}?`,
+        default: true,
+      },
+    ]);
+    if (!confirm) return;
+    try {
+      await git.reset(["--hard", last.from]);
+      history.popLastAction();
+      history.addUndone(last);
+      console.log(boxen(chalk.green(`✔ Reset back to ${last.from.substr(0,7)}`), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      }));
+    } catch (err) {
+      console.error(boxen(chalk.red("Error undoing hard reset: ") + err.message, {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "red",
+        margin: 1,
+      }));
+    }
+    return;
+  }
+  if (last.type === "unstage") {
+    // Re-stage the file to the recorded hash
+    await git.add([last.file]);
+    // Optionally, reset file to the staged hash (advanced)
+    console.log(boxen(chalk.green(`✔ Undo: re-staged file ${last.file}`), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+    return;
+  }
+  if (last.type === "stash-create") {
+    // Undo stash create: apply and drop the stash
+    await git.stash(["apply", last.ref]);
+    await git.stash(["drop", last.ref]);
+    console.log(boxen(chalk.green(`✔ Undo: unstashed changes from ${last.ref}`), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+    return;
+  }
+  // Fallback: last commit undo (soft reset)
   try {
     const log = await git.log();
     if (!log.total || log.total === 0) {
@@ -18,7 +166,6 @@ module.exports = async function undo() {
       );
       return;
     }
-
     const { confirm } = await inquirer.prompt([
       {
         type: "confirm",
@@ -37,7 +184,6 @@ module.exports = async function undo() {
         default: false,
       },
     ]);
-
     if (!confirm) {
       console.log(
         boxen(chalk.blue("Undo cancelled."), {
@@ -49,7 +195,6 @@ module.exports = async function undo() {
       );
       return;
     }
-
     await git.reset(["--soft", "HEAD~1"]);
     console.log(
       boxen(chalk.green("✔ Last commit has been undone (soft reset)."), {

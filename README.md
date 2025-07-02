@@ -119,6 +119,11 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 | `gmt unst <file>` or `gmt unstage <file>` | Unstage a file (git reset HEAD <file>)                             | স্টেজ থেকে আনস্টেজ করতে                                                 |
 | `gmt reha` or `gmt reset-hard`            | Hard reset to previous commit (git reset --hard HEAD~1)            | সব কিছু আগের কমিটে ফিরিয়ে নিতে                                          |
 | `gmt rere` or `gmt reset-recover`         | Recover from bad reset (git reset --hard ORIG_HEAD)                | ভুল reset ফিরিয়ে আনতে                                                   |
+| `gmt quick`                               | Quick menu for all major git actions (interactive palette)         |
+| `gmt cherry-pick` or `gmt chpi`           | Interactively cherry-pick commit(s) from any branch                |
+| `gmt rebase` or `gmt rbs`                 | Interactively rebase onto a branch or rebase last N commits        |
+| `gmt bisect` or `gmt bsc`                 | Interactive git bisect wizard (find commit that introduced a bug)  |
+| `gmt tag` or `gmt tg`                     | Interactive tag management (list, create, delete, push tags)       |
 
 ---
 
@@ -202,6 +207,30 @@ package.json         # Project manifest
 
 - `gmt rere`, `gmt reset-recover`  
   Recover from bad reset (git reset --hard ORIG_HEAD) | ভুল reset ফিরিয়ে আনতে
+
+- `gmt quick`  
+  Quick menu for all major git actions (interactive palette)
+
+- `gmt cherry-pick`, `gmt chpi`  
+  Interactively cherry-pick commit(s) from any branch
+
+- `gmt rebase`, `gmt rbs`  
+  Interactively rebase onto a branch or rebase last N commits
+
+- `gmt bisect`, `gmt bsc`  
+  Interactive git bisect wizard (find commit that introduced a bug)
+
+- `gmt tag`, `gmt tg`  
+  Interactive tag management (list, create, delete, push tags)
+
+- **Undo/Redo**: Instantly undo/redo commits, branch/tag/stash create/delete, reset, remote branch delete, file unstage, stash create, and more.
+
+### Undo/Redo
+
+- Undo/redo covers: commits, branch/tag create/delete, stash create/pop/drop, reset (hard/soft), remote branch delete, file unstage, stash create, and more.
+- Example:
+  - `gmt undo` (undo last action, e.g., unstage a file, create a stash)
+  - `gmt redo` (redo last undone action)
 
 ---
 

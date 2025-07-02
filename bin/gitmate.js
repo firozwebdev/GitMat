@@ -30,6 +30,7 @@ const quick = require('../src/commands/quick');
 const cherryPick = require('../src/commands/cherry-pick');
 const rebase = require('../src/commands/rebase');
 const bisect = require('../src/commands/bisect');
+const tag = require('../src/commands/tag');
 
 program
   .name("gitmate")
@@ -226,6 +227,16 @@ program
   .action(bisect);
 
 program
+  .command('tag')
+  .description('Interactive tag management (list, create, delete, push tags)')
+  .action(tag);
+
+program
+  .command('tg')
+  .description('Interactive tag management (shortcut for tag)')
+  .action(tag);
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -284,6 +295,11 @@ program
     console.log('  unst <file>, unstage <file>   Unstage a file (git reset HEAD <file>)');
     console.log('  reha, reset-hard              Hard reset to previous commit (git reset --hard HEAD~1)');
     console.log('  rere, reset-recover           Recover from bad reset (git reset --hard ORIG_HEAD)');
+    console.log('  quick                 Quick menu for all major git actions (interactive palette)');
+    console.log('  cherry-pick, chpi     Interactively cherry-pick commit(s) from any branch');
+    console.log('  rebase, rbs           Interactively rebase onto a branch or rebase last N commits');
+    console.log('  bisect, bsc           Interactive git bisect wizard (find commit that introduced a bug)');
+    console.log('  tag, tg               Interactive tag management (list, create, delete, push tags)');
   });
 
 // TODO: Add more commands here

@@ -3,6 +3,8 @@ const chalk = require("chalk");
 const boxen = require("boxen");
 const figlet = require("figlet");
 const simpleGit = require("simple-git");
+const redoCmd = require("./redo");
+const history = require("./history");
 
 // Import commands
 const statusCmd = require("./status");
@@ -53,7 +55,18 @@ module.exports = async function quick() {
     { name: "Stash (manage stashes)", value: "stash" }
   );
   if (log.total && log.total > 0) {
-    actions.push({ name: "Undo (soft reset last commit)", value: "undo" });
+    if (history.getLastAction()) {
+      actions.push({
+        name: "Undo (restore last deleted branch/tag or undo last commit)",
+        value: "undo",
+      });
+    }
+    if (history.getLastUndone()) {
+      actions.push({
+        name: "Redo (re-delete last restored branch/tag)",
+        value: "redo",
+      });
+    }
     actions.push({
       name: "Cherry-pick (apply commit from another branch)",
       value: "cherry-pick",
@@ -112,6 +125,8 @@ module.exports = async function quick() {
     await stashCmd();
   } else if (action === "undo") {
     await undoCmd();
+  } else if (action === "redo") {
+    await redoCmd();
   } else if (action === "cherry-pick") {
     await cherryPickCmd();
   } else if (action === "rebase") {

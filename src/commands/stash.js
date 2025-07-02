@@ -3,6 +3,7 @@ const inquirer = require("inquirer");
 const chalk = require("chalk");
 const boxen = require("boxen");
 const Table = require("cli-table3");
+const history = require("./history");
 
 module.exports = async function stash() {
   const git = simpleGit();
@@ -42,26 +43,7 @@ module.exports = async function stash() {
         default: "WIP",
       },
     ]);
-    try {
-      await git.stash(["push", "-m", message]);
-      console.log(
-        boxen(chalk.green(`✔ Stashed changes with message: "${message}"`), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "green",
-          margin: 1,
-        })
-      );
-    } catch (err) {
-      console.error(
-        boxen(chalk.red("Error creating stash: ") + err.message, {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "red",
-          margin: 1,
-        })
-      );
-    }
+    await createStash(message);
     return;
   }
 
@@ -130,7 +112,16 @@ module.exports = async function stash() {
 
   if (stashAction === "apply") {
     try {
+      // Get patch and message before popping
+      const patch = (await git.raw(["stash", "show", "-p", ref])).toString();
+      const message = stashes.all[selectedIdx].message;
       await git.stash(["pop", ref]);
+      history.addAction({
+        type: "stash-pop",
+        index: selectedIdx,
+        message,
+        patch,
+      });
       console.log(
         boxen(chalk.green(`✔ Applied and removed ${ref}`), {
           padding: 1,
@@ -151,7 +142,16 @@ module.exports = async function stash() {
     }
   } else if (stashAction === "drop") {
     try {
+      // Get patch and message before dropping
+      const patch = (await git.raw(["stash", "show", "-p", ref])).toString();
+      const message = stashes.all[selectedIdx].message;
       await git.stash(["drop", ref]);
+      history.addAction({
+        type: "stash-drop",
+        index: selectedIdx,
+        message,
+        patch,
+      });
       console.log(
         boxen(chalk.green(`✔ Dropped ${ref}`), {
           padding: 1,
@@ -205,3 +205,31 @@ module.exports = async function stash() {
     );
   }
 };
+
+async function createStash(message) {
+  const git = simpleGit();
+  try {
+    const result = await git.stash(["push", "-m", message]);
+    // Get the latest stash ref
+    const { stdout } = await git.raw(["stash", "list"]);
+    const ref = stdout.split("\n")[0].split(":")[0];
+    history.addAction({ type: "stash-create", ref, message });
+    console.log(
+      boxen(chalk.green("✔ Stashed changes: " + message), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      })
+    );
+  } catch (err) {
+    console.error(
+      boxen(chalk.red("Error creating stash: ") + err.message, {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "red",
+        margin: 1,
+      })
+    );
+  }
+}

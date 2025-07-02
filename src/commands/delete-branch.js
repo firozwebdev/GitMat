@@ -3,6 +3,7 @@ const inquirer = require("inquirer");
 const chalk = require("chalk");
 const boxen = require("boxen");
 const Table = require("cli-table3");
+const history = require("./history");
 
 module.exports = async function deleteBranch(branchArg) {
   const git = simpleGit();
@@ -82,6 +83,15 @@ module.exports = async function deleteBranch(branchArg) {
         return;
       }
       await git.deleteLocalBranch(branch);
+      // Record for undo
+      let hash = null;
+      try {
+        const log = await git.log({ from: branch, to: branch, n: 1 });
+        hash = log.latest ? log.latest.hash : null;
+      } catch {}
+      if (hash) {
+        history.addAction({ type: "branch-delete", branch: branch, hash });
+      }
       console.log(
         boxen(chalk.green(`✔ Branch '${branch}' deleted.`), {
           padding: 1,
@@ -144,6 +154,15 @@ module.exports = async function deleteBranch(branchArg) {
       return;
     }
     await git.deleteLocalBranch(branch);
+    // Record for undo
+    let hash = null;
+    try {
+      const log = await git.log({ from: branch, to: branch, n: 1 });
+      hash = log.latest ? log.latest.hash : null;
+    } catch {}
+    if (hash) {
+      history.addAction({ type: "branch-delete", branch: branch, hash });
+    }
     console.log(
       boxen(chalk.green(`✔ Branch '${branch}' deleted.`), {
         padding: 1,
