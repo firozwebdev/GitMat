@@ -1,6 +1,8 @@
 const simpleGit = require("simple-git");
 const inquirer = require("inquirer");
 const chalk = require("chalk");
+const boxen = require("boxen");
+const Table = require("cli-table3");
 
 module.exports = async function branch() {
   const git = simpleGit();
@@ -22,7 +24,14 @@ module.exports = async function branch() {
       },
     ]);
     if (!createNew) {
-      console.log(chalk.blue("No new branch created. Exiting."));
+      console.log(
+        boxen(chalk.blue("No new branch created. Exiting."), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "blue",
+          margin: 1,
+        })
+      );
       return;
     }
     const { newBranch } = await inquirer.prompt([
@@ -36,12 +45,49 @@ module.exports = async function branch() {
     ]);
     try {
       await git.checkoutLocalBranch(newBranch);
-      console.log(chalk.green(`✔ Switched to new branch '${newBranch}'`));
+      console.log(
+        boxen(chalk.green(`✔ Switched to new branch '${newBranch}'`), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "green",
+          margin: 1,
+        })
+      );
     } catch (err) {
-      console.error(chalk.red("Error creating branch:"), err.message);
+      console.error(
+        boxen(chalk.red("Error creating branch:") + err.message, {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "red",
+          margin: 1,
+        })
+      );
     }
     return;
   }
+
+  // Show branch list as a table
+  const table = new Table({
+    head: [chalk.cyan("Branch"), chalk.cyan("Current")],
+    style: { head: [], border: [] },
+    chars: { mid: "", "left-mid": "", "mid-mid": "", "right-mid": "" },
+  });
+  branches.forEach((b) => {
+    table.push([
+      b === current ? chalk.bold.white(b) : b,
+      b === current ? chalk.green("✔") : "",
+    ]);
+  });
+  console.log(
+    boxen(table.toString(), {
+      padding: 1,
+      borderStyle: "round",
+      borderColor: "cyan",
+      margin: 1,
+      title: "Local Branches",
+      titleAlignment: "center",
+    })
+  );
 
   const choices = [
     ...branches.map((b) => ({
@@ -76,16 +122,44 @@ module.exports = async function branch() {
     ]);
     try {
       await git.checkoutLocalBranch(newBranch);
-      console.log(chalk.green(`✔ Switched to new branch '${newBranch}'`));
+      console.log(
+        boxen(chalk.green(`✔ Switched to new branch '${newBranch}'`), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "green",
+          margin: 1,
+        })
+      );
     } catch (err) {
-      console.error(chalk.red("Error creating branch:"), err.message);
+      console.error(
+        boxen(chalk.red("Error creating branch:") + err.message, {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "red",
+          margin: 1,
+        })
+      );
     }
   } else {
     try {
       await git.checkout(selected);
-      console.log(chalk.green(`✔ Switched to branch '${selected}'`));
+      console.log(
+        boxen(chalk.green(`✔ Switched to branch '${selected}'`), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "green",
+          margin: 1,
+        })
+      );
     } catch (err) {
-      console.error(chalk.red("Error switching branch:"), err.message);
+      console.error(
+        boxen(chalk.red("Error switching branch:") + err.message, {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "red",
+          margin: 1,
+        })
+      );
     }
   }
 };

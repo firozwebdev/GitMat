@@ -3,4 +3,5 @@
 # Place this file in a directory in your PATH (e.g., /usr/local/bin)
 # Then you can use 'gmt' as a shortcut for 'gitmate' in any terminal
 
-gitmate "$@" 
+SCRIPT_DIR="$(dirname "$0")"
+node "$SCRIPT_DIR/gitmate.js" "$@" 
