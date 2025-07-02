@@ -10,6 +10,8 @@ const undo = require("../src/commands/undo");
 const branch = require("../src/commands/branch");
 const init = require("../src/commands/init");
 const deleteBranch = require("../src/commands/delete-branch");
+const stash = require("../src/commands/stash");
+const smart = require("../src/commands/smart");
 
 program
   .name("gitmate")
@@ -65,6 +67,16 @@ program
   .action(branch);
 
 program
+  .command("stash")
+  .description("Interactive stash manager (create, list, apply, drop)")
+  .action(stash);
+
+program
+  .command("smart")
+  .description("Smart contextual actions based on repo state")
+  .action(smart);
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -99,6 +111,12 @@ program
       "  br              Interactive branch switcher (shortcut for branch)"
     );
     console.log("  branch          Interactive branch switcher");
+    console.log(
+      "  stash           Interactive stash manager (create, list, apply, drop)"
+    );
+    console.log(
+      "  smart           Smart contextual actions based on repo state"
+    );
     console.log("  help     Show this help message");
     console.log("\nExamples:");
     console.log("  gm status");
