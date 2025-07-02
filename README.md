@@ -193,28 +193,28 @@ package.json         # Project manifest
   Pretty, colorized, paginated git log with commit details.
 
 - `gmt psf`  
-  Force push (git push --force) | সাধারন জোর করে পুশ
+  Force push (git push --force)
 
 - `gmt psfl`  
-  Force push with lease (git push --force-with-lease) | নিরাপদ জোর করে পুশ
+  Force push with lease (git push --force-with-lease)
 
 - `gmt psa`  
-  Push all branches (git push --all origin) | সব ব্রাঞ্চ পুশ
+  Push all branches (git push --all origin)
 
 - `gmt pst`  
-  Push all tags (git push --tags) | সব ট্যাগ পুশ
+  Push all tags (git push --tags)
 
 - `gmt psd <branch>`  
-  Delete remote branch (git push origin --delete <branch>) | রিমোট থেকে ব্রাঞ্চ মুছা
+  Delete remote branch (git push origin --delete <branch>)
 
 - `gmt unst <file>`, `gmt unstage <file>`  
-  Unstage a file (git reset HEAD <file>) | স্টেজ থেকে আনস্টেজ করতে
+  Unstage a file (git reset HEAD <file>)
 
 - `gmt reha`, `gmt reset-hard`  
-  Hard reset to previous commit (git reset --hard HEAD~1) | সব কিছু আগের কমিটে ফিরিয়ে নিতে
+  Hard reset to previous commit (git reset --hard HEAD~1)
 
 - `gmt rere`, `gmt reset-recover`  
-  Recover from bad reset (git reset --hard ORIG_HEAD) | ভুল reset ফিরিয়ে আনতে
+  Recover from bad reset (git reset --hard ORIG_HEAD)
 
 - `gmt quick`  
   Quick menu for all major git actions (interactive palette)
@@ -232,7 +232,7 @@ package.json         # Project manifest
   Interactive tag management (list, create, delete, push tags)
 
 - `gmt config`  
-  View or set git config (user.name, user.email, alias) interactively, with Bengali support. Undo/redo supported.
+  View or set git config (user.name, user.email, alias) interactively. Undo/redo supported.
 
 - **Undo/Redo**: Instantly undo/redo commits, branch/tag/stash create/delete, reset, remote branch delete, file unstage, stash create, and more.
 
