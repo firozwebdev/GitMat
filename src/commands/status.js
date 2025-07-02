@@ -2,6 +2,11 @@ const simpleGit = require("simple-git");
 const chalk = require("chalk");
 const boxen = require("boxen");
 const figlet = require("figlet");
+const inquirer = require("inquirer");
+const saveCmd = require("./save");
+const pushCmd = require("./push");
+const logCmd = require("./log");
+const undoCmd = require("./undo");
 
 module.exports = async function status() {
   const prettyMs = (await import("pretty-ms")).default;
@@ -83,16 +88,15 @@ module.exports = async function status() {
     status.modified.length > 0 ||
     status.not_added.length > 0
   ) {
-    next.push("save");
+    next.push({ name: "Save (stage & commit all changes)", value: "save" });
   }
   if (status.ahead > 0) {
-    next.push("push");
+    next.push({ name: "Push (upload commits to remote)", value: "push" });
   }
-  next.push("log");
+  next.push({ name: "Log (view commit history)", value: "log" });
   if (log.total && log.total > 0) {
-    next.push("undo");
+    next.push({ name: "Undo (soft reset last commit)", value: "undo" });
   }
-  output += chalk.gray("Next: " + next.join(" | ") + "\n");
 
   // Add a nice box around the output
   const boxed = boxen(output, {
@@ -105,4 +109,42 @@ module.exports = async function status() {
   });
 
   console.log(banner + "\n" + boxed);
+
+  // Interactive next actions
+  if (next.length > 0) {
+    const { action } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "action",
+        message:
+          "What would you like to do next?\n(Use arrow keys to select, Enter to confirm, Ctrl+C to quit.)",
+        choices: [
+          ...next,
+          { name: "Exit (select and press Enter)", value: "exit" },
+        ],
+        loop: false,
+        pageSize: 10,
+      },
+    ]);
+    if (action === "save") {
+      const { message } = await inquirer.prompt([
+        {
+          type: "input",
+          name: "message",
+          message: "Enter a commit message:",
+          default: "savepoint",
+        },
+      ]);
+      await saveCmd(message);
+    } else if (action === "push") {
+      await pushCmd();
+    } else if (action === "log") {
+      await logCmd();
+    } else if (action === "undo") {
+      await undoCmd();
+    } else {
+      // Exit
+      return;
+    }
+  }
 };

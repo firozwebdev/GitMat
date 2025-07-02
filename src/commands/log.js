@@ -120,13 +120,14 @@ module.exports = async function logViewer(opts = {}) {
         value: i,
       });
     }
-    choices.push({ name: "Exit", value: "exit" });
+    choices.push({ name: "Exit (select and press Enter)", value: "exit" });
 
     const { action } = await inquirer.prompt([
       {
         type: "list",
         name: "action",
-        message: "Select an action:",
+        message:
+          "Select an action: (Use arrow keys to select, Enter to confirm, Ctrl+C to quit.)",
         choices,
         pageSize: 15,
       },
