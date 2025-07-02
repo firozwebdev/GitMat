@@ -1,22 +1,20 @@
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const figlet = require("figlet");
-const simpleGit = require("simple-git");
-const redoCmd = require("./redo");
-const history = require("./history");
+import chalk from "chalk";
+import figlet from "figlet";
+import simpleGit from "simple-git";
+import history from "./history.js";
+import redoCmd from "./redo.js";
 
 // Import commands
-const statusCmd = require("./status");
-const saveCmd = require("./save");
-const pushCmd = require("./push");
-const branchCmd = require("./branch");
-const logCmd = require("./log");
-const stashCmd = require("./stash");
-const undoCmd = require("./undo");
-const cherryPickCmd = require("./cherry-pick");
-const rebaseCmd = require("./rebase");
-const bisectCmd = require("./bisect");
+import bisectCmd from "./bisect.js";
+import branchCmd from "./branch.js";
+import cherryPickCmd from "./cherry-pick.js";
+import logCmd from "./log.js";
+import pushCmd from "./push.js";
+import rebaseCmd from "./rebase.js";
+import saveCmd from "./save.js";
+import stashCmd from "./stash.js";
+import statusCmd from "./status.js";
+import undoCmd from "./undo.js";
 // Placeholders for new features
 // const redoCmd = require('./redo');
 // const cherryPickCmd = require('./cherry-pick');
@@ -24,7 +22,13 @@ const bisectCmd = require("./bisect");
 // const bisectCmd = require('./bisect');
 // const tagCmd = require('./tag');
 
-module.exports = async function quick() {
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+
+export default async function quick() {
   const git = simpleGit();
   const status = await git.status();
   const log = await git.log({ n: 1 });
@@ -136,4 +140,4 @@ module.exports = async function quick() {
   } else {
     return;
   }
-};
+}

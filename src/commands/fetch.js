@@ -1,9 +1,13 @@
-const inquirer = require("inquirer");
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
-
-module.exports = async function fetchCommand(remoteArg) {
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+export default async function fetchCommand(remoteArg) {
+  inquirer = await getInquirer();
   const git = simpleGit();
   let remotes = [];
   try {
@@ -71,4 +75,4 @@ module.exports = async function fetchCommand(remoteArg) {
       })
     );
   }
-};
+}

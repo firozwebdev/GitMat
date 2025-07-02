@@ -1,10 +1,14 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const Table = require("cli-table3");
+import simpleGit from "simple-git";
+import chalk from "chalk";
+import boxen from "boxen";
+import Table from "cli-table3";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
 
-module.exports = async function branch() {
+export default async function branch() {
   const git = simpleGit();
   const branchSummary = await git.branchLocal();
   const branches = branchSummary.all;
@@ -217,4 +221,4 @@ module.exports = async function branch() {
       );
     }
   }
-};
+}

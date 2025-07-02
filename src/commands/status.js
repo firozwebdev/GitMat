@@ -1,14 +1,27 @@
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const figlet = require("figlet");
-const inquirer = require("inquirer");
-const saveCmd = require("./save");
-const pushCmd = require("./push");
-const logCmd = require("./log");
-const undoCmd = require("./undo");
+import boxen from "boxen";
+import chalk from "chalk";
+import figlet from "figlet";
+import simpleGit from "simple-git";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+// Use dynamic import for command modules to avoid hoisting/circular issues
+async function getSaveCmd() {
+  return (await import("./save.js")).default;
+}
+async function getPushCmd() {
+  return (await import("./push.js")).default;
+}
+async function getLogCmd() {
+  return (await import("./log.js")).default;
+}
+async function getUndoCmd() {
+  return (await import("./undo.js")).default;
+}
 
-module.exports = async function status() {
+export default async function status() {
   const prettyMs = (await import("pretty-ms")).default;
   const git = simpleGit();
   const status = await git.status();
@@ -112,6 +125,7 @@ module.exports = async function status() {
 
   // Interactive next actions
   if (next.length > 0) {
+    const inquirer = await getInquirer();
     const { action } = await inquirer.prompt([
       {
         type: "list",
@@ -127,7 +141,9 @@ module.exports = async function status() {
       },
     ]);
     if (action === "save") {
-      const { message } = await inquirer.prompt([
+      const { message } = await (
+        await getInquirer()
+      ).prompt([
         {
           type: "input",
           name: "message",
@@ -135,16 +151,24 @@ module.exports = async function status() {
           default: "savepoint",
         },
       ]);
-      await saveCmd(message);
+      await (
+        await getSaveCmd()
+      )(message);
     } else if (action === "push") {
-      await pushCmd();
+      await (
+        await getPushCmd()
+      )();
     } else if (action === "log") {
-      await logCmd();
+      await (
+        await getLogCmd()
+      )();
     } else if (action === "undo") {
-      await undoCmd();
+      await (
+        await getUndoCmd()
+      )();
     } else {
       // Exit
       return;
     }
   }
-};
+}

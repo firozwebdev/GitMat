@@ -1,8 +1,8 @@
-const history = require("./history");
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
+import chalk from "chalk";
+import simpleGit from "simple-git";
+import history from "./history.js";
 
-module.exports = async function tagHandler(toDelete = []) {
+export default async function tagHandler(toDelete = []) {
   const git = simpleGit();
   let results = "";
   for (const tag of toDelete) {
@@ -23,4 +23,4 @@ module.exports = async function tagHandler(toDelete = []) {
     }
   }
   if (results) console.log(results);
-};
+}

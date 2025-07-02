@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --no-warnings ./bin/gitmate.js",
+    "help": "node --no-warnings ./bin/gitmate.js help",
+    "rc-edit": "tsx bin/rc-edit.jsx"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "bin": {
-    "gitmate": "./bin/gitmate.js"
+    "gitmate": "./bin/gitmate.js",
+    "rc-edit": "./bin/rc-edit"
   },
   "dependencies": {
     "boxen": "^5.1.2",
@@ -18,8 +22,16 @@
     "cli-table3": "^0.6.5",
     "commander": "^14.0.0",
     "figlet": "^1.8.1",
-    "inquirer": "^8.2.6",
+    "ink": "^3.2.0",
+    "ink-table": "^3.1.0",
+    "inquirer": "^9.1.0",
+    "inquirer-autocomplete-prompt": "^3.0.1",
     "pretty-ms": "^9.2.0",
+    "react": "^16.14.0",
     "simple-git": "^3.28.0"
+  },
+  "type": "module",
+  "devDependencies": {
+    "tsx": "^4.20.3"
   }
 }

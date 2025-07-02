@@ -1,10 +1,13 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const Table = require("cli-table3");
-
-module.exports = async function logViewer(opts = {}) {
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+export default async function logViewer(options) {
+  inquirer = await getInquirer();
   const git = simpleGit();
   let log;
   const chalkBox = (msg, color = "cyan", title = "", borderColor = "cyan") =>
@@ -18,20 +21,23 @@ module.exports = async function logViewer(opts = {}) {
     });
 
   // Handle new modes
-  if (opts.mode) {
+  if (options.mode) {
     let cmd = ["log"];
-    if (opts.mode === "oneline") cmd.push("--oneline");
-    else if (opts.mode === "graph") cmd.push("--oneline", "--graph", "--all");
-    else if (opts.mode === "file" && opts.filename) cmd.push(opts.filename);
-    else if (opts.mode === "since" && opts.time)
-      cmd.push(`--since="${opts.time}"`);
-    else if (opts.mode === "author" && opts.author)
-      cmd.push(`--author="${opts.author}"`);
-    else if (opts.mode === "name-only") cmd.push("--name-only");
-    else if (opts.mode === "diff") cmd.push("-p");
-    else if (opts.mode === "limit" && opts.n) cmd.push(`-n`, String(opts.n));
-    else if (opts.mode === "format" && opts.format)
-      cmd.push(`--pretty=format:${opts.format}`);
+    if (options.mode === "oneline") cmd.push("--oneline");
+    else if (options.mode === "graph")
+      cmd.push("--oneline", "--graph", "--all");
+    else if (options.mode === "file" && options.filename)
+      cmd.push(options.filename);
+    else if (options.mode === "since" && options.time)
+      cmd.push(`--since="${options.time}"`);
+    else if (options.mode === "author" && options.author)
+      cmd.push(`--author="${options.author}"`);
+    else if (options.mode === "name-only") cmd.push("--name-only");
+    else if (options.mode === "diff") cmd.push("-p");
+    else if (options.mode === "limit" && options.n)
+      cmd.push(`-n`, String(options.n));
+    else if (options.mode === "format" && options.format)
+      cmd.push(`--pretty=format:${options.format}`);
     else cmd = null;
     if (cmd) {
       try {
@@ -175,4 +181,4 @@ module.exports = async function logViewer(opts = {}) {
       ]);
     }
   }
-};
+}

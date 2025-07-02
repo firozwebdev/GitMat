@@ -1,8 +1,8 @@
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
 
-module.exports = async function pst() {
+export default async function pst() {
   const git = simpleGit();
   try {
     await git.push(["--tags"]);
@@ -24,4 +24,4 @@ module.exports = async function pst() {
       })
     );
   }
-};
+}

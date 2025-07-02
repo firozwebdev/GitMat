@@ -1,8 +1,8 @@
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
 
-module.exports = async function psa() {
+export default async function psa() {
   const git = simpleGit();
   try {
     await git.push(["--all", "origin"]);
@@ -24,4 +24,4 @@ module.exports = async function psa() {
       })
     );
   }
-};
+}

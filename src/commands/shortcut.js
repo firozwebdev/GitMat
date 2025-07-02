@@ -1,10 +1,13 @@
-const fs = require("fs");
-const path = require("path");
-const { exec } = require("child_process");
-const boxen = require("boxen");
-const chalk = require("chalk");
-
-module.exports = async function shortcut(cmd, args) {
+import boxen from "boxen";
+import chalk from "chalk";
+import fs from "fs";
+import path from "path";
+let exec;
+async function getExec() {
+  if (!exec) exec = (await import("child_process")).exec;
+  return exec;
+}
+export default async function shortcut(cmd, args) {
   const rcPath = path.resolve(process.cwd(), ".gitmaterc");
   if (!fs.existsSync(rcPath)) {
     console.error(
@@ -52,7 +55,8 @@ module.exports = async function shortcut(cmd, args) {
       margin: 1,
     })
   );
-  exec(command, (error, stdout, stderr) => {
+  const execFn = await getExec();
+  execFn(command, (error, stdout, stderr) => {
     if (error) {
       console.error(
         boxen(chalk.red("Error: ") + error.message, {
@@ -85,4 +89,4 @@ module.exports = async function shortcut(cmd, args) {
       );
     }
   });
-};
+}

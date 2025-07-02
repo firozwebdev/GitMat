@@ -1,10 +1,10 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const history = require("./history");
+import boxen from "boxen";
+import chalk from "chalk";
+import inquirer from "inquirer";
+import simpleGit from "simple-git";
+import history from "./history.js";
 
-module.exports = async function psd(branch) {
+export default async function psd(branch) {
   const git = simpleGit();
   if (!branch) {
     console.error(
@@ -75,4 +75,4 @@ module.exports = async function psd(branch) {
       })
     );
   }
-};
+}

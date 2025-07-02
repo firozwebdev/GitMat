@@ -1,9 +1,9 @@
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const history = require("./history");
+import simpleGit from "simple-git";
+import chalk from "chalk";
+import boxen from "boxen";
+import history from "./history.js";
 
-module.exports = async function unstage(file) {
+export default async function unstage(file) {
   const git = simpleGit();
   if (!file) {
     console.log(
@@ -45,4 +45,4 @@ module.exports = async function unstage(file) {
       })
     );
   }
-};
+}

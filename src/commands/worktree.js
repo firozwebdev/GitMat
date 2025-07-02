@@ -1,9 +1,13 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-
-module.exports = async function worktreeCommand() {
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+export default async function worktreeCommand() {
+  inquirer = await getInquirer();
   const git = simpleGit();
   const { action } = await inquirer.prompt([
     {
@@ -142,4 +146,4 @@ module.exports = async function worktreeCommand() {
     }
     return;
   }
-};
+}

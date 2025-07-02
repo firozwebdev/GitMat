@@ -1,10 +1,15 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const history = require("./history");
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+import history from "./history.js";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
 
-module.exports = async function undo() {
+export default async function undo() {
+  inquirer = await getInquirer();
   const git = simpleGit();
   const last = history.getLastAction();
   if (!last) {

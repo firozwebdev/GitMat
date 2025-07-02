@@ -1,9 +1,9 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
+import boxen from "boxen";
+import chalk from "chalk";
+import inquirer from "inquirer";
+import simpleGit from "simple-git";
 
-module.exports = async function resetRecover() {
+export default async function resetRecover() {
   const git = simpleGit();
   const { confirm } = await inquirer.prompt([
     {
@@ -54,4 +54,4 @@ module.exports = async function resetRecover() {
       })
     );
   }
-};
+}

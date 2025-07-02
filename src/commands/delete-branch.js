@@ -1,11 +1,13 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const Table = require("cli-table3");
-const history = require("./history");
-
-module.exports = async function deleteBranch(branchArg) {
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+import history from "./history.js";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+export default async function deleteBranch(branchArg) {
   const git = simpleGit();
   try {
     const branchSummary = await git.branchLocal();
@@ -181,4 +183,4 @@ module.exports = async function deleteBranch(branchArg) {
       })
     );
   }
-};
+}

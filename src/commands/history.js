@@ -1,5 +1,5 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 function getHistoryPath() {
   return path.resolve(process.cwd(), ".gitmate-history.json");
@@ -56,7 +56,7 @@ function popLastUndone() {
   return action;
 }
 
-module.exports = {
+export default {
   addAction,
   getLastAction,
   popLastAction,

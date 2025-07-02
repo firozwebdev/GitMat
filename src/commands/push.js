@@ -1,8 +1,12 @@
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
-
-module.exports = async function push(remote, branch) {
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+export default async function push(remote, branch) {
   const git = simpleGit();
   try {
     if (remote && branch) {
@@ -36,4 +40,4 @@ module.exports = async function push(remote, branch) {
       })
     );
   }
-};
+}

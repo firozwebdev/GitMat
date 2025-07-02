@@ -1,10 +1,14 @@
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const inquirer = require("inquirer");
-const readline = require("readline");
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
 
-module.exports = async function blameCommand(file) {
+export default async function blameCommand(file) {
+  inquirer = await getInquirer();
   if (!file) {
     console.log(
       boxen(chalk.red("Please specify a file to blame."), {
@@ -106,4 +110,4 @@ module.exports = async function blameCommand(file) {
     else if (nav === "prev") page--;
     else break;
   }
-};
+}

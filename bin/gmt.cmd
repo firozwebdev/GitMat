@@ -4,4 +4,4 @@
 :: Then you can use 'gmt' as a shortcut for 'gitmate' in any terminal
 
 set SCRIPT_DIR=%~dp0
-node "%SCRIPT_DIR%gitmate.js" %* 
+node --no-warnings "%SCRIPT_DIR%gitmate.js" %* 

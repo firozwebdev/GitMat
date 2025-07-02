@@ -1,8 +1,8 @@
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
 
-module.exports = async function save(message) {
+export default async function save(message) {
   const git = simpleGit();
   const commitMessage =
     typeof message === "string" && message.trim() ? message : "savepoint";
@@ -39,4 +39,4 @@ module.exports = async function save(message) {
     });
     console.error(errMsg);
   }
-};
+}

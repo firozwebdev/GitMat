@@ -1,36 +1,36 @@
 #!/usr/bin/env node
 
-const { program } = require("commander");
-const packageJson = require("../package.json");
-const figlet = require('figlet');
-const shortcut = require('../src/commands/shortcut');
+import { program } from "commander";
+import figlet from "figlet";
+import packageJson from "../package.json" assert { type: "json" };
+import shortcut from "../src/commands/shortcut.js";
 
 // Command imports (to be implemented)
-const status = require("../src/commands/status");
-const save = require("../src/commands/save");
-const undo = require("../src/commands/undo");
-const branch = require("../src/commands/branch");
-const init = require("../src/commands/init");
-const deleteBranch = require("../src/commands/delete-branch");
-const stash = require("../src/commands/stash");
-const smart = require("../src/commands/smart");
-const push = require("../src/commands/push");
-const remoteInit = require("../src/commands/remote-init");
-const rcEdit = require('../src/commands/rc-edit');
-const logViewer = require('../src/commands/log');
-const psf = require('../src/commands/psf'); // সাধারন জোর করে পুশ
-const psfl = require('../src/commands/psfl'); // নিরাপদ জোর করে পুশ
-const psa = require('../src/commands/psa'); // সব ব্রাঞ্চ পুশ
-const pst = require('../src/commands/pst'); // সব ট্যাগ পুশ
-const psd = require('../src/commands/psd'); // রিমোট থেকে ব্রাঞ্চ মুছা
-const unstage = require('../src/commands/unstage'); // স্টেজ থেকে আনস্টেজ করতে
-const resetHard = require('../src/commands/reset-hard'); // সব কিছু আগের কমিটে ফিরিয়ে নিতে
-const resetRecover = require('../src/commands/reset-recover'); // ভুল reset ফিরিয়ে আনতে
-const quick = require('../src/commands/quick');
-const cherryPick = require('../src/commands/cherry-pick');
-const rebase = require('../src/commands/rebase');
-const bisect = require('../src/commands/bisect');
-const tag = require('../src/commands/tag');
+import bisect from "../src/commands/bisect.js";
+import branch from "../src/commands/branch.js";
+import cherryPick from "../src/commands/cherry-pick.js";
+import deleteBranch from "../src/commands/delete-branch.js";
+import init from "../src/commands/init.js";
+import logViewer from "../src/commands/log.js";
+import psa from "../src/commands/psa.js";
+import psd from "../src/commands/psd.js";
+import psf from "../src/commands/psf.js";
+import psfl from "../src/commands/psfl.js";
+import pst from "../src/commands/pst.js";
+import push from "../src/commands/push.js";
+import quick from "../src/commands/quick.js";
+import rcEdit from "../src/commands/rc-edit.js";
+import rebase from "../src/commands/rebase.js";
+import remoteInit from "../src/commands/remote-init.js";
+import resetHard from "../src/commands/reset-hard.js";
+import resetRecover from "../src/commands/reset-recover.js";
+import save from "../src/commands/save.js";
+import smart from "../src/commands/smart.js";
+import stash from "../src/commands/stash.js";
+import status from "../src/commands/status.js";
+import tag from "../src/commands/tag.js";
+import undo from "../src/commands/undo.js";
+import unstage from "../src/commands/unstage.js";
 
 program
   .name("gitmate")
