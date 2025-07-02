@@ -3,6 +3,7 @@
 const { program } = require("commander");
 const packageJson = require("../package.json");
 const figlet = require('figlet');
+const shortcut = require('../src/commands/shortcut');
 
 // Command imports (to be implemented)
 const status = require("../src/commands/status");
@@ -15,6 +16,8 @@ const stash = require("../src/commands/stash");
 const smart = require("../src/commands/smart");
 const push = require("../src/commands/push");
 const remoteInit = require("../src/commands/remote-init");
+const rcEdit = require('../src/commands/rc-edit');
+const logViewer = require('../src/commands/log');
 
 program
   .name("gitmate")
@@ -101,6 +104,16 @@ program
   .action(remoteInit);
 
 program
+  .command("rc-edit")
+  .description('Create or edit .gitmaterc shortcuts interactively')
+  .action(rcEdit);
+
+program
+  .command('log')
+  .description('Pretty, colorized, paginated git log with commit details')
+  .action(logViewer);
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -134,6 +147,9 @@ program
     console.log('');
     console.log(green('Other:'));
     console.log('  ' + cyan('help') + '                Show this help message');
+    console.log('  rc-edit          Create or edit .gitmaterc shortcuts interactively');
+    console.log('  <shortcut>       Run a custom shortcut from .gitmaterc');
+    console.log('  log             Pretty, colorized, paginated git log with commit details');
     console.log('');
     console.log(yellow('EXAMPLES:'));
     console.log('  ' + white('gmt st'));
@@ -150,4 +166,20 @@ program
 
 // TODO: Add more commands here
 
-program.parse(process.argv);
+program.exitOverride();
+
+try {
+  program.parse(process.argv);
+} catch (err) {
+  // If it's an unknown command, handle as shortcut
+  const knownCommands = [
+    'init', 'remote-init', 'st', 'status', 'save', 'undo', 'br', 'branch',
+    'del', 'db', 'delete-branch', 'stash', 'smart', 'ps', 'help', 'rc-edit', 'log'
+  ];
+  const userCmd = process.argv[2];
+  if (userCmd && !knownCommands.includes(userCmd)) {
+    shortcut(userCmd, process.argv.slice(3));
+  } else {
+    throw err;
+  }
+}
