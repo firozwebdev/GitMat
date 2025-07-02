@@ -129,6 +129,9 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 | `gmt submodule`                           | Manage git submodules (list, add, update, init, sync, remove)      | Manage git submodules                                                   |
 | `gmt reflog`                              | Show git reflog, checkout/reset to previous states                 | Show git reflog, checkout/reset to previous states                      |
 | `gmt fetch [remote]`                      | Fetch all or specific remote, show summary, suggest next actions   | Fetch all or specific remote, show summary, suggest next actions        |
+| `gmt clean`                               | Preview and delete untracked files, dry-run, confirm before delete | Preview and delete untracked files, dry-run, confirm before delete      |
+| `gmt notes`                               | Add, show, edit, remove notes on commits (interactive)             | Add, show, edit, remove notes on commits (interactive)                  |
+| `gmt worktree`                            | List, add, remove worktrees (interactive)                          | List, add, remove worktrees (interactive)                               |
 
 ---
 
@@ -284,3 +287,12 @@ The following files/folders are ignored:
 
 - `gmt fetch [remote]`  
   Fetch all or a specific remote, show summary of changes, and suggest next actions (pull, merge, rebase).
+
+- `gmt clean`  
+  Preview and delete untracked files interactively, with dry-run and confirmation before delete.
+
+- `gmt notes`  
+  Add, show, edit, or remove notes on commits interactively.
+
+- `gmt worktree`  
+  List, add, or remove worktrees interactively, with status for each worktree.
