@@ -2,6 +2,7 @@
 
 const { program } = require("commander");
 const packageJson = require("../package.json");
+const figlet = require('figlet');
 
 // Command imports (to be implemented)
 const status = require("../src/commands/status");
@@ -103,59 +104,48 @@ program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
-    console.log(`\nGitMate (gm) - Your smart Git companion\n`);
-    console.log("Usage: gm <command> [options]\n");
-    console.log("Commands:");
-    console.log(
-      "  st              Enhanced git status (banner, box, color)"
-    );
-    console.log(
-      "  status          Enhanced git status (banner, box, color)"
-    );
-    console.log(
-      '  save     Stage all changes and commit with the message (default: "savepoint")'
-    );
-    console.log(
-      "  undo     Undo the last commit (soft reset) with confirmation"
-    );
-    console.log(
-      "  branch   Interactive branch switcher (select or create branch)"
-    );
-    console.log(
-      "  init     Initialize a new git repository in the current directory"
-    );
-    console.log(
-      "  delete-branch   Interactively delete a local branch (excluding current)"
-    );
-    console.log(
-      "  db [branch]      Delete a local branch by name (with confirmation), or interactively if not specified"
-    );
-    console.log(
-      "  del [branch]      Delete a local branch by name (with confirmation), or interactively if not specified"
-    );
-    console.log(
-      "  br              Interactive branch switcher (shortcut for branch)"
-    );
-    console.log("  branch          Interactive branch switcher");
-    console.log(
-      "  stash           Interactive stash manager (create, list, apply, drop)"
-    );
-    console.log(
-      "  smart           Smart contextual actions based on repo state"
-    );
-    console.log(
-      "  ps [remote] [branch]  Push current branch to remote, or specify remote and branch"
-    );
-    console.log(
-      "  remote-init      Add remote, set main branch, and push to origin main"
-    );
-    console.log("  help     Show this help message");
-    console.log("\nExamples:");
-    console.log("  gm status");
-    console.log("  gm save");
-    console.log("  gm undo");
-    console.log("  gm branch");
-    console.log("\nFor more details, see the README.md.");
+    const banner = figlet.textSync('GitMate', { horizontalLayout: 'default', width: 60 });
+    const cyan = (msg) => `\x1b[36m${msg}\x1b[0m`;
+    const yellow = (msg) => `\x1b[33m${msg}\x1b[0m`;
+    const green = (msg) => `\x1b[32m${msg}\x1b[0m`;
+    const magenta = (msg) => `\x1b[35m${msg}\x1b[0m`;
+    const white = (msg) => `\x1b[37m${msg}\x1b[0m`;
+    console.log(`\n${cyan(banner)}`);
+    console.log(magenta('Your smart Git companion\n'));
+    console.log(yellow('USAGE:') + '    ' + white('gmt <command> [options]\n'));
+    console.log(green('Core Commands:'));
+    console.log('  ' + cyan('init') + '                Initialize a git repository');
+    console.log('  ' + cyan('remote-init') + '         Add remote, set main branch, and push to origin main');
+    console.log('  ' + cyan('st') + ',' + cyan(' status') + '         Enhanced git status (banner, box, color)');
+    console.log('  ' + cyan('save [msg]') + '           Stage all changes and commit (default: "savepoint")');
+    console.log('  ' + cyan('undo') + '                Undo last commit (with confirmation)');
+    console.log('');
+    console.log(green('Branch Management:'));
+    console.log('  ' + cyan('br') + ',' + cyan(' branch') + '         Interactive branch switcher (table, create, switch)');
+    console.log('  ' + cyan('del [branch]') + ',' + cyan(' db [branch]') + '  Delete a branch by name (with confirmation)');
+    console.log('  ' + cyan('delete-branch') + '         Interactively delete a branch');
+    console.log('');
+    console.log(green('Stash & Smart:'));
+    console.log('  ' + cyan('stash') + '               Interactive stash manager (create, list, apply, drop, view)');
+    console.log('  ' + cyan('smart') + '               Smart contextual actions based on repo state');
+    console.log('');
+    console.log(green('Remote:'));
+    console.log('  ' + cyan('ps [remote] [branch]') + '  Push current branch to remote, or specify remote and branch');
+    console.log('');
+    console.log(green('Other:'));
+    console.log('  ' + cyan('help') + '                Show this help message');
+    console.log('');
+    console.log(yellow('EXAMPLES:'));
+    console.log('  ' + white('gmt st'));
+    console.log('  ' + white('gmt save "Initial commit"'));
+    console.log('  ' + white('gmt br'));
+    console.log('  ' + white('gmt del feature-branch'));
+    console.log('  ' + white('gmt stash'));
+    console.log('  ' + white('gmt smart'));
+    console.log('  ' + white('gmt ps origin main'));
+    console.log('  ' + white('gmt remote-init'));
+    console.log('');
+    console.log(magenta('For more details, see the README.md.'));
   });
 
 // TODO: Add more commands here
