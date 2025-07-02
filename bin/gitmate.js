@@ -17,7 +17,12 @@ program
 
 program.command("status").description("Enhanced git status").action(status);
 
-program.command("save").description("Quick savepoint commit").action(save);
+program
+  .command("save [message]")
+  .description(
+    'Stage all changes and commit with the message (default: "savepoint")'
+  )
+  .action((message) => save(message));
 
 program
   .command("undo")
@@ -45,7 +50,7 @@ program
       "  status   Show enhanced git status (branch, ahead/behind, staged/changed files)"
     );
     console.log(
-      '  save     Stage all changes and commit with the message "savepoint"'
+      '  save     Stage all changes and commit with the message (default: "savepoint")'
     );
     console.log(
       "  undo     Undo the last commit (soft reset) with confirmation"
