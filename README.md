@@ -1,6 +1,31 @@
 # GitMate
 
+> **Tip:** For faster usage, set up a `gm` alias for `gitmate` in your terminal! See below for how to make it permanent.
+
 Your smart Git companion – making Git easier, faster, and more human-friendly.
+
+---
+
+## 🚀 Quick Alias: Use `gm` Instead of `gitmate`
+
+### **Temporary (per session):**
+
+```powershell
+Set-Alias gm gitmate
+```
+
+### **Permanent (all PowerShell sessions):**
+
+1. Open PowerShell and run:
+   ```powershell
+   if (!(Test-Path -Path $PROFILE)) { New-Item -Type File -Path $PROFILE -Force }
+   notepad $PROFILE
+   ```
+2. Add this line to the file:
+   ```powershell
+   Set-Alias gm gitmate
+   ```
+3. Save and close. Restart PowerShell. Now you can use `gm` in any session!
 
 ---
 
@@ -106,3 +131,33 @@ The following files/folders are ignored:
 - [inquirer](https://www.npmjs.com/package/inquirer)
 - [chalk](https://www.npmjs.com/package/chalk)
 - [Lazygit](https://github.com/jesseduffield/lazygit)
+
+---
+
+## 🖥️ Cross-Platform Alias Script (gm)
+
+To use `gm` as a shortcut for `gitmate` on any OS, this project provides two scripts:
+
+- `bin/gm` (for Linux/macOS/Unix)
+- `bin/gm.cmd` (for Windows)
+
+### **How to use:**
+
+#### **On Linux/macOS/Unix:**
+
+1. Copy `bin/gm` to a directory in your PATH (e.g., `/usr/local/bin`):
+   ```sh
+   cp bin/gm /usr/local/bin/gm
+   chmod +x /usr/local/bin/gm
+   ```
+2. Now you can use `gm` in any terminal.
+
+#### **On Windows:**
+
+1. Copy `bin/gm.cmd` to a directory in your PATH (e.g., `C:\Windows` or another folder in your PATH):
+   ```cmd
+   copy bin\gm.cmd C:\Windows\gm.cmd
+   ```
+2. Now you can use `gm` in any Command Prompt or PowerShell.
+
+---

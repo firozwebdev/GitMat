@@ -1,0 +1,6 @@
+#!/bin/sh
+# gmt - Shortcut for gitmate CLI
+# Place this file in a directory in your PATH (e.g., /usr/local/bin)
+# Then you can use 'gmt' as a shortcut for 'gitmate' in any terminal
+
+gitmate "$@" 
