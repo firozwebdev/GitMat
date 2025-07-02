@@ -91,24 +91,79 @@ module.exports = async function branch() {
 
   const choices = [
     ...branches.map((b) => ({
-      name: b === current ? `${b} (current)` : b,
+      name: b === current ? chalk.green(`✔ ${b}`) : b,
       value: b,
       short: b,
       disabled: b === current ? "Current branch" : false,
     })),
     new inquirer.Separator(),
     { name: "Create new branch...", value: "__create__" },
+    { name: "Exit", value: "__exit__" },
   ];
+
+  // Find the first enabled branch for default selection
+  const defaultIndex = choices.findIndex(
+    (c) => !c.disabled && typeof c.value === "string" && c.value !== "__exit__"
+  );
+
+  const tip = chalk.gray(
+    "Tip: You can always exit with Ctrl+C, Esc, or by selecting Exit."
+  );
+
+  // Handle Ctrl+C (SIGINT) for a friendly exit message
+  const sigintHandler = () => {
+    console.log(
+      "\n" +
+        boxen(chalk.blue("Exited without switching branches (Ctrl+C)."), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "blue",
+          margin: 1,
+        })
+    );
+    process.exit(0);
+  };
+  process.once("SIGINT", sigintHandler);
 
   const { selected } = await inquirer.prompt([
     {
       type: "list",
       name: "selected",
-      message: "Select a branch to switch to:",
+      message: `Select a branch to switch to, or Exit:` + "\n" + tip,
       choices,
       pageSize: 10,
+      default: defaultIndex >= 0 ? defaultIndex : undefined,
     },
   ]);
+  process.removeListener("SIGINT", sigintHandler);
+
+  if (selected === "__exit__") {
+    console.log(
+      boxen(chalk.blue("Exited without switching branches."), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "blue",
+        margin: 1,
+      })
+    );
+    console.log(
+      chalk.gray("Tip: You can always exit with Esc or by selecting Exit.")
+    );
+    return;
+  }
+
+  if (selected === current) {
+    console.log(
+      boxen(
+        chalk.yellow(`You are already on '${current}'. No branch switched.`),
+        { padding: 1, borderStyle: "round", borderColor: "yellow", margin: 1 }
+      )
+    );
+    console.log(
+      chalk.gray("Tip: You can always exit with Esc or by selecting Exit.")
+    );
+    return;
+  }
 
   if (selected === "__create__") {
     const { newBranch } = await inquirer.prompt([
