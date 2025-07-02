@@ -20,7 +20,14 @@ program
   .description("Your smart Git companion")
   .version(packageJson.version);
 
-program.command("status").description("Enhanced git status").action(status);
+program
+  .command('st')
+  .description('Enhanced git status (banner, box, color)')
+  .action(status);
+program
+  .command('status')
+  .description('Enhanced git status (banner, box, color)')
+  .action(status);
 
 program
   .command("save [message]")
@@ -100,7 +107,10 @@ program
     console.log("Usage: gm <command> [options]\n");
     console.log("Commands:");
     console.log(
-      "  status   Show enhanced git status (branch, ahead/behind, staged/changed files)"
+      "  st              Enhanced git status (banner, box, color)"
+    );
+    console.log(
+      "  status          Enhanced git status (banner, box, color)"
     );
     console.log(
       '  save     Stage all changes and commit with the message (default: "savepoint")'
