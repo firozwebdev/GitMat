@@ -60,6 +60,11 @@ program
   .action((branch) => deleteBranch(branch));
 
 program
+  .command("br")
+  .description("Interactive branch switcher (shortcut for branch)")
+  .action(branch);
+
+program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
@@ -90,6 +95,10 @@ program
     console.log(
       "  del [branch]      Delete a local branch by name (with confirmation), or interactively if not specified"
     );
+    console.log(
+      "  br              Interactive branch switcher (shortcut for branch)"
+    );
+    console.log("  branch          Interactive branch switcher");
     console.log("  help     Show this help message");
     console.log("\nExamples:");
     console.log("  gm status");
