@@ -76,8 +76,23 @@ module.exports = async function status() {
     output += chalk.red("✗ You have changes\n");
   }
 
-  // Next actions
-  output += chalk.gray("Next: save | push | log | undo\n");
+  // Context-aware next actions
+  let next = [];
+  if (
+    status.staged.length > 0 ||
+    status.modified.length > 0 ||
+    status.not_added.length > 0
+  ) {
+    next.push("save");
+  }
+  if (status.ahead > 0) {
+    next.push("push");
+  }
+  next.push("log");
+  if (log.total && log.total > 0) {
+    next.push("undo");
+  }
+  output += chalk.gray("Next: " + next.join(" | ") + "\n");
 
   // Add a nice box around the output
   const boxed = boxen(output, {
