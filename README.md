@@ -124,6 +124,11 @@ To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two sc
 | `gmt rebase` or `gmt rbs`                 | Interactively rebase onto a branch or rebase last N commits        |
 | `gmt bisect` or `gmt bsc`                 | Interactive git bisect wizard (find commit that introduced a bug)  |
 | `gmt tag` or `gmt tg`                     | Interactive tag management (list, create, delete, push tags)       |
+| `gmt config`                              | View/set git config (user/email/alias) interactively               | গিট কনফিগ দেখুন/সেট করুন (ইউজার/ইমেইল/এলিয়াস)                          |
+| `gmt merge [branch]`                      | Interactive merge with conflict handling, undo/redo                | ইন্টারেক্টিভ মার্জ (কনফ্লিক্ট হ্যান্ডলিং সহ)                            |
+| `gmt submodule`                           | Manage git submodules (list, add, update, init, sync, remove)      | Manage git submodules                                                   |
+| `gmt reflog`                              | Show git reflog, checkout/reset to previous states                 | Show git reflog, checkout/reset to previous states                      |
+| `gmt fetch [remote]`                      | Fetch all or specific remote, show summary, suggest next actions   | Fetch all or specific remote, show summary, suggest next actions        |
 
 ---
 
@@ -223,11 +228,14 @@ package.json         # Project manifest
 - `gmt tag`, `gmt tg`  
   Interactive tag management (list, create, delete, push tags)
 
+- `gmt config`  
+  View or set git config (user.name, user.email, alias) interactively, with Bengali support. Undo/redo supported.
+
 - **Undo/Redo**: Instantly undo/redo commits, branch/tag/stash create/delete, reset, remote branch delete, file unstage, stash create, and more.
 
 ### Undo/Redo
 
-- Undo/redo covers: commits, branch/tag create/delete, stash create/pop/drop, reset (hard/soft), remote branch delete, file unstage, stash create, and more.
+- Undo/redo covers: commits, branch/tag create/delete, stash create/pop/drop, reset (hard/soft), remote branch delete, file unstage, stash create, config changes, merge, and more.
 - Example:
   - `gmt undo` (undo last action, e.g., unstage a file, create a stash)
   - `gmt redo` (redo last undone action)
@@ -267,3 +275,12 @@ The following files/folders are ignored:
 - [Lazygit](https://github.com/jesseduffield/lazygit)
 
 ---
+
+- `gmt submodule`  
+  Manage git submodules interactively: list, add, update, init, sync, remove.
+
+- `gmt reflog`  
+  Show git reflog, interactively checkout or reset to previous states, paginated.
+
+- `gmt fetch [remote]`  
+  Fetch all or a specific remote, show summary of changes, and suggest next actions (pull, merge, rebase).

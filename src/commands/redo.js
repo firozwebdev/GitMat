@@ -230,6 +230,30 @@ module.exports = async function redo() {
     );
     return;
   }
+  if (last.type === "config") {
+    await git.raw(["config", last.key, last.value]);
+    console.log(
+      boxen(chalk.green(`✔ Redo: set ${last.key} to '${last.value}'`), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      })
+    );
+    return;
+  }
+  if (last.type === "merge") {
+    await git.merge([last.branch]);
+    console.log(
+      boxen(chalk.green(`✔ Redo: merged '${last.branch}' again`), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      })
+    );
+    return;
+  }
   console.log(
     boxen(chalk.yellow("No redo available for last action."), {
       padding: 1,

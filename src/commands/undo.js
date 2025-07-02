@@ -152,6 +152,21 @@ module.exports = async function undo() {
     console.log(boxen(chalk.green(`✔ Undo: unstashed changes from ${last.ref}`), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
     return;
   }
+  if (last.type === "config") {
+    if (last.prev) {
+      await git.raw(["config", last.key, last.prev]);
+      console.log(boxen(chalk.green(`✔ Undo: restored ${last.key} to '${last.prev}'`), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+    } else {
+      await git.raw(["config", "--unset", last.key]);
+      console.log(boxen(chalk.green(`✔ Undo: unset ${last.key}`), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+    }
+    return;
+  }
+  if (last.type === "merge") {
+    await git.raw(["reset", "--hard", last.preMergeHead]);
+    console.log(boxen(chalk.green(`✔ Undo: reset to pre-merge state (${last.preMergeHead})`), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+    return;
+  }
   // Fallback: last commit undo (soft reset)
   try {
     const log = await git.log();
