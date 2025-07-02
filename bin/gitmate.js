@@ -26,6 +26,10 @@ const psd = require('../src/commands/psd'); // রিমোট থেকে ব�
 const unstage = require('../src/commands/unstage'); // স্টেজ থেকে আনস্টেজ করতে
 const resetHard = require('../src/commands/reset-hard'); // সব কিছু আগের কমিটে ফিরিয়ে নিতে
 const resetRecover = require('../src/commands/reset-recover'); // ভুল reset ফিরিয়ে আনতে
+const quick = require('../src/commands/quick');
+const cherryPick = require('../src/commands/cherry-pick');
+const rebase = require('../src/commands/rebase');
+const bisect = require('../src/commands/bisect');
 
 program
   .name("gitmate")
@@ -190,6 +194,36 @@ program
   .command('rere')
   .description('Recover from bad reset (git reset --hard ORIG_HEAD)')
   .action(resetRecover);
+
+program
+  .command('quick')
+  .description('Quick menu for all major git actions (interactive palette)')
+  .action(quick);
+
+program
+  .command('chpi')
+  .description('Interactively cherry-pick commit(s) from any branch (shortcut for cherry-pick)')
+  .action(cherryPick);
+
+program
+  .command('rebase')
+  .description('Interactively rebase onto a branch or rebase last N commits')
+  .action(rebase);
+
+program
+  .command('rbs')
+  .description('Interactively rebase onto a branch or rebase last N commits (shortcut for rebase)')
+  .action(rebase);
+
+program
+  .command('bisect')
+  .description('Interactive git bisect wizard (find commit that introduced a bug)')
+  .action(bisect);
+
+program
+  .command('bsc')
+  .description('Interactive git bisect wizard (shortcut for bisect)')
+  .action(bisect);
 
 program
   .command("help")
