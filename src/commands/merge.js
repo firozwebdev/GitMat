@@ -36,22 +36,19 @@ export default async function mergeCommand(targetBranch) {
     if (!branch) return; // User cancelled
   }
   // Show merge summary
-  let ahead;
+  let behind;
   try {
-    // git.raw returns stdout directly.
-    ahead = await git.raw([
+    // Only count commits in target branch not in current branch
+    const countStr = await git.raw([
       "rev-list",
-      "--left-right",
       "--count",
-      `${currentBranch}...${branch}`,
+      `^${currentBranch}`,
+      branch,
     ]);
+    behind = parseInt(countStr.trim(), 10) || 0;
   } catch (e) {
-    // This can fail if branches are identical or one is invalid.
-    // Default to 0 commits to show and let the user decide.
-    ahead = "0\t0";
+    behind = 0;
   }
-  const [behindCount] = (ahead || "0\t0").trim().split("\t");
-  const behind = parseInt(behindCount, 10) || 0;
   console.log(
     boxen(
       chalk.cyan(
