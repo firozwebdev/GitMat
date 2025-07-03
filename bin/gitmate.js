@@ -329,6 +329,46 @@ program.addHelpText('beforeAll', () =>
   chalk.bold.green('\nGitMat CLI - Your smart Git companion\n')
 );
 
+// Custom, colorful help output
+program.helpInformation = function () {
+  // Banner
+  const banner = chalk.cyan(figlet.textSync("GitMat", { horizontalLayout: "default" }));
+  const welcome = chalk.bold.magenta("Welcome to GitMat! Your smart Git companion.");
+  const boxed = boxen(`${banner}\n${welcome}`, {
+    padding: 1,
+    margin: 1,
+    borderStyle: "round",
+    borderColor: "green",
+    backgroundColor: "#222222"
+  });
+
+  // Usage
+  const usage = chalk.bold.green("\nUsage: ") + chalk.yellow("gmt [options] [command]");
+
+  // Options
+  const optionsHeader = chalk.bold.underline.green("\nOptions:");
+  const options = this.options.map(opt =>
+    "  " +
+    chalk.magenta(opt.flags.padEnd(25)) +
+    chalk.white(opt.description)
+  ).join("\n");
+
+  // Commands
+  const commandsHeader = chalk.bold.underline.green("\nCommands:");
+  const commands = this.commands.filter(cmd => !cmd._hidden).map(cmd =>
+    "  " +
+    chalk.yellow(cmd.name().padEnd(20)) +
+    chalk.white(cmd.description())
+  ).join("\n");
+
+  // Footer
+  const footer = chalk.gray("\nFor more details, see the README or run ") +
+    chalk.yellow("gmt <command> --help") +
+    chalk.gray(" for command-specific help.\n");
+
+  return `${boxed}\n${usage}\n${optionsHeader}\n${options}\n${commandsHeader}\n${commands}\n${footer}\n`;
+};
+
 // TODO: Add more commands here
 
 program.exitOverride();
