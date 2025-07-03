@@ -3,12 +3,17 @@ import chalk from "chalk";
 import Table from "cli-table3";
 import simpleGit from "simple-git";
 import history from "./history.js";
+import { isGitRepo } from "./utils.js";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
   return inquirer;
 }
 export default async function deleteBranch(branchArg) {
+  if (!isGitRepo()) {
+    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    process.exit(1);
+  }
   const inquirer = await getInquirer();
   const git = simpleGit();
   try {

@@ -2,12 +2,17 @@ import boxen from "boxen";
 import chalk from "chalk";
 import Table from "cli-table3";
 import simpleGit from "simple-git";
+import { isGitRepo } from "./utils.js";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
   return inquirer;
 }
 export default async function logViewer(options = {}) {
+  if (!isGitRepo()) {
+    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    process.exit(1);
+  }
   inquirer = await getInquirer();
   const git = simpleGit();
   let log;
@@ -68,12 +73,18 @@ export default async function logViewer(options = {}) {
   try {
     log = await git.log({ n: 50 }); // Fetch up to 50 commits
   } catch (err) {
+    let msg;
+    if (err.message && err.message.includes("does not have any commits yet")) {
+      msg = chalk.yellow("This repository has no commits yet.");
+    } else {
+      msg = chalk.red("Error reading git log: ") + err.message;
+    }
     console.error(
       chalkBox(
-        chalk.red("Error reading git log: ") + err.message,
-        "red",
-        "Error",
-        "red"
+        msg,
+        err.message && err.message.includes("does not have any commits yet") ? "yellow" : "red",
+        err.message && err.message.includes("does not have any commits yet") ? "Info" : "Error",
+        err.message && err.message.includes("does not have any commits yet") ? "yellow" : "red"
       )
     );
     return;

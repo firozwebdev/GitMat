@@ -2,6 +2,7 @@ import boxen from "boxen";
 import chalk from "chalk";
 import figlet from "figlet";
 import simpleGit from "simple-git";
+import { isGitRepo } from "./utils.js";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
@@ -22,10 +23,19 @@ async function getUndoCmd() {
 }
 
 export default async function status() {
+  if (!isGitRepo()) {
+    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    process.exit(1);
+  }
   const prettyMs = (await import("pretty-ms")).default;
   const git = simpleGit();
   const status = await git.status();
-  const log = await git.log({ n: 1 });
+  let log;
+  try {
+    log = await git.log({ n: 1 });
+  } catch (e) {
+    log = { latest: null, total: 0 };
+  }
   const stashes = await git.stashList();
   const remotes = await git.getRemotes(true);
 

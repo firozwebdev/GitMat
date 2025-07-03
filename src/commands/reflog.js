@@ -2,8 +2,13 @@ const simpleGit = require("simple-git");
 const chalk = require("chalk");
 const boxen = require("boxen");
 const inquirer = require("inquirer");
+const { isGitRepo } = require("./utils.js");
 
 module.exports = async function reflogCommand() {
+  if (!isGitRepo()) {
+    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    process.exit(1);
+  }
   const git = simpleGit();
   let reflog;
   try {

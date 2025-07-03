@@ -2,8 +2,13 @@ import simpleGit from "simple-git";
 import chalk from "chalk";
 import boxen from "boxen";
 import history from "./history.js";
+import { isGitRepo } from "./utils.js";
 
 export default async function unstage(file) {
+  if (!isGitRepo()) {
+    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    process.exit(1);
+  }
   const git = simpleGit();
   if (!file) {
     console.log(

@@ -2,12 +2,17 @@ import boxen from "boxen";
 import chalk from "chalk";
 import ora from "ora";
 import simpleGit from "simple-git";
+import { isGitRepo } from "./utils.js";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
   return inquirer;
 }
 export default async function rebase() {
+  if (!isGitRepo()) {
+    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    process.exit(1);
+  }
   const git = simpleGit();
   let branches;
   try {

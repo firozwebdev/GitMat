@@ -3,6 +3,7 @@ import figlet from "figlet";
 import simpleGit from "simple-git";
 import history from "./history.js";
 import redoCmd from "./redo.js";
+import { isGitRepo } from "./utils.js";
 
 // Import commands
 import bisectCmd from "./bisect.js";
@@ -29,6 +30,10 @@ async function getInquirer() {
 }
 
 export default async function quick() {
+  if (!isGitRepo()) {
+    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    process.exit(1);
+  }
   const git = simpleGit();
   const status = await git.status();
   const log = await git.log({ n: 1 });
