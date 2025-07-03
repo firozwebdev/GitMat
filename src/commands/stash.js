@@ -17,200 +17,201 @@ export default async function stash() {
   inquirer = await getInquirer();
 
   // Main menu
-  const { action } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "action",
-      message: boxen(
-        chalk.cyan("Stash Management - What would you like to do?"),
-        {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "cyan",
-          margin: 1,
-          title: "GitMate Stash",
-          titleAlignment: "center",
-        }
-      ),
-      choices: [
-        { name: "Create new stash", value: "create" },
-        { name: "List/apply/drop stashes", value: "list" },
-        { name: "Exit", value: "exit" },
-      ],
-    },
-  ]);
-
-  if (action === "exit") return;
-
-  if (action === "create") {
-    const { message } = await inquirer.prompt([
+  while (true) {
+    const { action } = await inquirer.prompt([
       {
-        type: "input",
-        name: "message",
-        message: "Enter a description for this stash:",
-        default: "WIP",
+        type: "list",
+        name: "action",
+        message: boxen(
+          chalk.cyan("Stash Management - What would you like to do?"),
+          {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "cyan",
+            margin: 1,
+            title: "GitMate Stash",
+            titleAlignment: "center",
+          }
+        ),
+        choices: [
+          { name: "Create new stash", value: "create" },
+          { name: "List/apply/drop stashes", value: "list" },
+          { name: "⬅ Back", value: "back" },
+          { name: "Exit", value: "exit" },
+        ],
       },
     ]);
-    await createStash(message);
-    return;
-  }
 
-  // List stashes
-  const stashes = await git.stashList();
-  if (!stashes.all.length) {
+    if (action === "exit" || action === "back") return;
+
+    if (action === "create") {
+      const { message } = await inquirer.prompt([
+        {
+          type: "input",
+          name: "message",
+          message: "Enter a description for this stash:",
+          default: "WIP",
+        },
+      ]);
+      await createStash(message);
+      continue;
+    }
+
+    // List stashes
+    const stashes = await git.stashList();
+    if (!stashes.all.length) {
+      console.log(
+        boxen(chalk.yellow("No stashes found."), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "yellow",
+          margin: 1,
+        })
+      );
+      continue;
+    }
+
+    // Show stashes in a table
+    const Table = (await import("cli-table3")).default;
+    const table = new Table({
+      head: [chalk.cyan("Index"), chalk.cyan("Message")],
+      style: { head: [], border: [] },
+      chars: { mid: "", "left-mid": "", "mid-mid": "", "right-mid": "" },
+    });
+    stashes.all.forEach((stash, idx) => {
+      table.push([chalk.white(idx), chalk.white(stash.message)]);
+    });
     console.log(
-      boxen(chalk.yellow("No stashes found."), {
+      boxen(table.toString(), {
         padding: 1,
         borderStyle: "round",
-        borderColor: "yellow",
+        borderColor: "cyan",
         margin: 1,
+        title: "Stash List",
+        titleAlignment: "center",
       })
     );
-    return;
-  }
 
-  // Show stashes in a table
-  const table = new Table({
-    head: [chalk.cyan("Index"), chalk.cyan("Message")],
-    style: { head: [], border: [] },
-    chars: { mid: "", "left-mid": "", "mid-mid": "", "right-mid": "" },
-  });
-  stashes.all.forEach((stash, idx) => {
-    table.push([chalk.white(idx), chalk.white(stash.message)]);
-  });
-  console.log(
-    boxen(table.toString(), {
-      padding: 1,
-      borderStyle: "round",
-      borderColor: "cyan",
-      margin: 1,
-      title: "Stash List",
-      titleAlignment: "center",
-    })
-  );
+    // Select a stash to act on
+    const { selectedIdx } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "selectedIdx",
+        message: "Select a stash to manage:",
+        choices: [
+          ...stashes.all.map((stash, idx) => ({
+            name: `${idx}: ${stash.message}`,
+            value: idx,
+          })),
+          { name: "⬅ Back", value: "back" },
+        ],
+      },
+    ]);
+    if (selectedIdx === "back") continue;
 
-  // Select a stash to act on
-  const { selectedIdx } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "selectedIdx",
-      message: "Select a stash to manage:",
-      choices: stashes.all.map((stash, idx) => ({
-        name: `${idx}: ${stash.message}`,
-        value: idx,
-      })),
-    },
-  ]);
+    const { stashAction } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "stashAction",
+        message: "What do you want to do with this stash?",
+        choices: [
+          { name: "Apply (pop) this stash", value: "apply" },
+          { name: "Drop (delete) this stash", value: "drop" },
+          { name: "View details", value: "view" },
+          { name: "⬅ Back", value: "back" },
+          { name: "Cancel", value: "cancel" },
+        ],
+      },
+    ]);
+    if (stashAction === "back" || stashAction === "cancel") continue;
 
-  const { stashAction } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "stashAction",
-      message: "What do you want to do with this stash?",
-      choices: [
-        { name: "Apply (pop) this stash", value: "apply" },
-        { name: "Drop (delete) this stash", value: "drop" },
-        { name: "View details", value: "view" },
-        { name: "Cancel", value: "cancel" },
-      ],
-    },
-  ]);
+    const ref = `stash@{${selectedIdx}}`;
 
-  const ref = `stash@{${selectedIdx}}`;
-
-  if (stashAction === "apply") {
-    try {
-      // Get patch and message before popping
-      const patch = (await git.raw(["stash", "show", "-p", ref])).toString();
-      const message = stashes.all[selectedIdx].message;
-      await git.stash(["pop", ref]);
-      history.addAction({
-        type: "stash-pop",
-        index: selectedIdx,
-        message,
-        patch,
-      });
-      console.log(
-        boxen(chalk.green(`✔ Applied and removed ${ref}`), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "green",
-          margin: 1,
-        })
-      );
-    } catch (err) {
-      console.error(
-        boxen(chalk.red("Error applying stash: ") + err.message, {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "red",
-          margin: 1,
-        })
-      );
+    if (stashAction === "apply") {
+      try {
+        // Get patch and message before popping
+        const patch = (await git.raw(["stash", "show", "-p", ref])).toString();
+        const message = stashes.all[selectedIdx].message;
+        await git.stash(["pop", ref]);
+        history.addAction({
+          type: "stash-pop",
+          index: selectedIdx,
+          message,
+          patch,
+        });
+        console.log(
+          boxen(chalk.green(`✔ Applied and removed ${ref}`), {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "green",
+            margin: 1,
+          })
+        );
+      } catch (err) {
+        console.error(
+          boxen(chalk.red("Error applying stash: ") + err.message, {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "red",
+            margin: 1,
+          })
+        );
+      }
+    } else if (stashAction === "drop") {
+      try {
+        // Get patch and message before dropping
+        const patch = (await git.raw(["stash", "show", "-p", ref])).toString();
+        const message = stashes.all[selectedIdx].message;
+        await git.stash(["drop", ref]);
+        history.addAction({
+          type: "stash-drop",
+          index: selectedIdx,
+          message,
+          patch,
+        });
+        console.log(
+          boxen(chalk.green(`✔ Dropped ${ref}`), {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "green",
+            margin: 1,
+          })
+        );
+      } catch (err) {
+        console.error(
+          boxen(chalk.red("Error dropping stash: ") + err.message, {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "red",
+            margin: 1,
+          })
+        );
+      }
+    } else if (stashAction === "view") {
+      // Show details (git stash show -p)
+      try {
+        const { stdout } = await git.raw(["stash", "show", "-p", ref]);
+        console.log(
+          boxen(chalk.white(stdout || "No diff available."), {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "cyan",
+            margin: 1,
+            title: `Details for ${ref}`,
+            titleAlignment: "center",
+          })
+        );
+      } catch (err) {
+        console.error(
+          boxen(chalk.red("Error showing stash: ") + err.message, {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "red",
+            margin: 1,
+          })
+        );
+      }
     }
-  } else if (stashAction === "drop") {
-    try {
-      // Get patch and message before dropping
-      const patch = (await git.raw(["stash", "show", "-p", ref])).toString();
-      const message = stashes.all[selectedIdx].message;
-      await git.stash(["drop", ref]);
-      history.addAction({
-        type: "stash-drop",
-        index: selectedIdx,
-        message,
-        patch,
-      });
-      console.log(
-        boxen(chalk.green(`✔ Dropped ${ref}`), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "green",
-          margin: 1,
-        })
-      );
-    } catch (err) {
-      console.error(
-        boxen(chalk.red("Error dropping stash: ") + err.message, {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "red",
-          margin: 1,
-        })
-      );
-    }
-  } else if (stashAction === "view") {
-    // Show details (git stash show -p)
-    try {
-      const { stdout } = await git.raw(["stash", "show", "-p", ref]);
-      console.log(
-        boxen(chalk.white(stdout || "No diff available."), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "cyan",
-          margin: 1,
-          title: `Details for ${ref}`,
-          titleAlignment: "center",
-        })
-      );
-    } catch (err) {
-      console.error(
-        boxen(chalk.red("Error showing stash: ") + err.message, {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "red",
-          margin: 1,
-        })
-      );
-    }
-  } else {
-    console.log(
-      boxen(chalk.blue("Cancelled."), {
-        padding: 1,
-        borderStyle: "round",
-        borderColor: "blue",
-        margin: 1,
-      })
-    );
   }
 }
 
