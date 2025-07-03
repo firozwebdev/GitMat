@@ -1,6 +1,6 @@
 {
-  "name": "gitmate",
-  "version": "1.0.0",
+  "name": "gitmat",
+  "version": "1.3.1",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -8,12 +8,23 @@
     "help": "node --no-warnings ./bin/gitmate.js help",
     "rc-edit": "tsx bin/rc-edit.jsx"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "git",
+    "cli",
+    "gitmate",
+    "git wrapper",
+    "git tools",
+    "git automation",
+    "interactive git",
+    "tui",
+    "devtools"
+  ],
+  "author": "Firoz Rahman <everythingkst@gmail.com>",
   "license": "ISC",
   "description": "",
   "bin": {
-    "gitmate": "./bin/gitmate.js",
+    "gitmat": "./bin/gitmat.js",
+    "gmt": "./bin/gmt.cmd",
     "rc-edit": "./bin/rc-edit"
   },
   "dependencies": {

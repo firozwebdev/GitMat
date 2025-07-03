@@ -5,6 +5,8 @@ import figlet from "figlet";
 import fs from "fs";
 import path from "path";
 import packageJson from "../package.json" assert { type: "json" };
+import chalk from "chalk";
+import boxen from "boxen";
 
 // Command imports (to be implemented)
 import bisect from "../src/commands/bisect.js";
@@ -315,6 +317,18 @@ program
     console.log('  tag, tg               Interactive tag management (list, create, delete, push tags)');
   });
 
+// Custom help colors (fix: only use supported hooks)
+program.configureHelp({
+  optionTerm: (option) => chalk.magenta(option),
+  argumentTerm: (arg) => chalk.cyan(arg),
+  commandTerm: (cmd) => chalk.yellow(cmd.name()),
+});
+
+// Add extra color to the help description
+program.addHelpText('beforeAll', () =>
+  chalk.bold.green('\nGitMat CLI - Your smart Git companion\n')
+);
+
 // TODO: Add more commands here
 
 program.exitOverride();
@@ -365,5 +379,45 @@ async function runShortcutIfExists() {
 
 (async () => {
   if (await runShortcutIfExists()) return;
-  program.parseAsync(process.argv);
+
+  const args = process.argv.slice(2);
+
+  if (args.length === 0) {
+    // Show banner and a short message
+    const banner = chalk.cyan(figlet.textSync("GitMat", { horizontalLayout: "default" }));
+    const welcome = chalk.bold.magenta("Welcome to GitMat! Your smart Git companion.");
+    const tip = chalk.green("Type ") + chalk.yellow("gmt help") + chalk.green(" to see all commands and options.");
+    const boxed = boxen(`${banner}\n${welcome}\n\n${tip}`, {
+      padding: 1,
+      margin: 1,
+      borderStyle: "round",
+      borderColor: "green",
+      backgroundColor: "#222222"
+    });
+    console.log(boxed + "\n");
+    process.exit(0);
+  }
+
+  const showBanner = args.length === 1 && (args[0] === '-h' || args[0] === '--help');
+  if (showBanner) {
+    const banner = chalk.cyan(figlet.textSync("GitMat", { horizontalLayout: "default" }));
+    const welcome = chalk.bold.magenta("Welcome to GitMat! Your smart Git companion.");
+    const boxed = boxen(`${banner}\n${welcome}`, {
+      padding: 1,
+      margin: 1,
+      borderStyle: "round",
+      borderColor: "green",
+      backgroundColor: "#222222"
+    });
+    console.log(boxed + "\n");
+  }
+
+  try {
+    await program.parseAsync(process.argv);
+  } catch (err) {
+    if (err.code === 'commander.version' || err.code === 'commander.help') {
+      process.exit(0);
+    }
+    throw err;
+  }
 })();

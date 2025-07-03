@@ -1,17 +1,32 @@
-# GitMate
+# GitMat
 
-> **Tip:** For faster usage, set up a `gmt` alias for `gitmate` in your terminal! See below for how to make it permanent.
+[![npm version](https://img.shields.io/npm/v/gitmat.svg?style=flat)](https://www.npmjs.com/package/gitmat)
+
+## 🚀 Installation (Global)
+
+Install GitMat globally via npm:
+
+```sh
+npm install -g gitmat
+```
+
+After installation, you can use the following commands anywhere:
+- `gitmat` (main command)
+- `gm` (alias)
+- `gmt` (alias, recommended for speed)
+
+> **Tip:** For faster usage, set up a `gmt` alias for `gitmat` in your terminal! See below for how to make it permanent.
 
 Your smart Git companion – making Git easier, faster, and more human-friendly.
 
 ---
 
-## 🚀 Quick Alias: Use `gmt` Instead of `gitmate`
+## 🚀 Quick Alias: Use `gmt` Instead of `gitmat`
 
 ### **Temporary (per session):**
 
 ```powershell
-Set-Alias gmt gitmate
+Set-Alias gmt gitmat
 ```
 
 ### **Permanent (all PowerShell sessions):**
@@ -23,7 +38,7 @@ Set-Alias gmt gitmate
    ```
 2. Add this line to the file:
    ```powershell
-   Set-Alias gmt gitmate
+   Set-Alias gmt gitmat
    ```
 3. Save and close. Restart PowerShell. Now you can use `gmt` in any session!
 
@@ -31,7 +46,7 @@ Set-Alias gmt gitmate
 
 ## 🧩 Overview
 
-**GitMate** is a CLI tool that wraps common Git workflows with:
+**GitMat** is a CLI tool that wraps common Git workflows with:
 
 - Human-friendly commands
 - Interactive CLI (TUI coming soon)
@@ -42,17 +57,17 @@ Set-Alias gmt gitmate
 
 ## 🚀 Features (POC)
 
-- Enhanced status summary: `gitmate status` / `gmt status`
-- Quick savepoint commit: `gitmate save` / `gmt save`
-- Undo last commit (with confirmation): `gitmate undo` / `gmt undo`
-- Interactive branch switcher: `gitmate branch` / `gmt branch`
-- (Alias: You can use `gmt` instead of `gitmate` for all commands)
+- Enhanced status summary: `gitmat status` / `gmt status`
+- Quick savepoint commit: `gitmat save` / `gmt save`
+- Undo last commit (with confirmation): `gitmat undo` / `gmt undo`
+- Interactive branch switcher: `gitmat branch` / `gmt branch`
+- (Alias: You can use `gmt` instead of `gitmat` for all commands)
 
 ---
 
 ## 🖥️ Cross-Platform Alias Script (gmt)
 
-To use `gmt` as a shortcut for `gitmate` on any OS, this project provides two scripts:
+To use `gmt` as a shortcut for `gitmat` on any OS, this project provides two scripts:
 
 - `bin/gmt` (for Linux/macOS/Unix)
 - `bin/gmt.cmd` (for Windows)
@@ -177,19 +192,19 @@ package.json         # Project manifest
 
 ## 🛠️ Usage
 
-- `gitmate status`, `gmt status`, or `gmt st`  
+- `gitmat status`, `gmt status`, or `gmt st`  
   Shows enhanced git status (branch, ahead/behind, staged/changed files).
 
-- `gitmate save` or `gmt save`  
+- `gitmat save` or `gmt save`  
   Stages all changes and commits with the message "savepoint".
 
-- `gitmate undo` or `gmt undo`  
+- `gitmat undo` or `gmt undo`  
   Prompts for confirmation, then undoes the last commit (soft reset).
 
-- `gitmate branch`, `gmt branch`, or `gmt br`  
+- `gitmat branch`, `gmt branch`, or `gmt br`  
   Interactive branch switcher. Select a branch to switch, or create a new one.
 
-- `gitmate log`, `gmt log`, or `gmt l`  
+- `gitmat log`, `gmt log`, or `gmt l`  
   Pretty, colorized, paginated git log with commit details.
 
 - `gmt psf`  
