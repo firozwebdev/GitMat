@@ -51,18 +51,29 @@ export default async function mergeCommand(targetBranch) {
     ahead = "0\t0";
   }
   const [behindCount] = (ahead || "0\t0").trim().split("\t");
+  const behind = parseInt(behindCount, 10) || 0;
   console.log(
     boxen(
       chalk.cyan(
-        `Merging '${branch}' into '${currentBranch}'\nCommits to merge: ${
-          behindCount || 0
-        }`
+        `Merging '${branch}' into '${currentBranch}'\nCommits to merge: ${behind}`
       ),
       { padding: 1, borderStyle: "round", borderColor: "cyan", margin: 1 }
     )
   );
+
+  if (behind === 0) {
+    console.log(
+      boxen(chalk.green("Already up to date. No merge necessary."), {
+        padding: 1,
+        borderStyle: "round",
+        borderColor: "green",
+        margin: 1,
+      })
+    );
+    return;
+  }
   // Save pre-merge HEAD for undo
-  const { stdout: preMergeHead } = await git.raw(["rev-parse", "HEAD"]);
+  const preMergeHead = await git.raw(["rev-parse", "HEAD"]);
   // Confirm merge
   const { confirm } = await inquirer.prompt([
     {

@@ -1,0 +1,20 @@
+{
+  "actions": [
+    {
+      "type": "merge",
+      "branch": "mainWorking",
+      "preMergeHead": "89dac49bb5cddba7a55571fceb852277918568fe"
+    },
+    {
+      "type": "merge",
+      "branch": "mainWorking",
+      "preMergeHead": "89dac49bb5cddba7a55571fceb852277918568fe"
+    },
+    {
+      "type": "merge",
+      "branch": "mainWorking",
+      "preMergeHead": "89dac49bb5cddba7a55571fceb852277918568fe"
+    }
+  ],
+  "undone": []
+}
