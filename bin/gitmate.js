@@ -11,6 +11,7 @@ import bisect from "../src/commands/bisect.js";
 import branch from "../src/commands/branch.js";
 import cherryPick from "../src/commands/cherry-pick.js";
 import deleteBranch from "../src/commands/delete-branch.js";
+import fetchCmd from "../src/commands/fetch.js";
 import init from "../src/commands/init.js";
 import logViewer from "../src/commands/log.js";
 import psa from "../src/commands/psa.js";
@@ -236,6 +237,11 @@ program
   .command('tg')
   .description('Interactive tag management (shortcut for tag)')
   .action(tag);
+
+program
+  .command("fetch [remote]")
+  .description("Fetch all or a specific remote, show summary, suggest next actions")
+  .action((remote) => fetchCmd(remote));
 
 program
   .command("help")
