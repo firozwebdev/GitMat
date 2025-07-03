@@ -201,7 +201,9 @@ const MainMenu = ({ onSelect }) => {
           {opt}
         </Text>
       ))}
-      <Text color="gray">Use ↑/↓ to move, Enter to select.</Text>
+      <Text color="gray">
+        Use ↑/↓ to move, Enter to select, Ctrl+C to quit.
+      </Text>
     </Box>
   );
 };
@@ -402,7 +404,9 @@ const PickTypeComponent = ({ onSelect, onCancel }) => {
           {opt}
         </Text>
       ))}
-      <Text color="gray">Use ↑/↓ to move, Enter to select, Esc to cancel.</Text>
+      <Text color="gray">
+        Use ↑/↓ to move, Enter to select, Esc to cancel, Ctrl+C to quit.
+      </Text>
     </Box>
   );
 };

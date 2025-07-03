@@ -1,12 +1,13 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import Table from "cli-table3";
 import simpleGit from "simple-git";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
   return inquirer;
 }
-export default async function logViewer(options) {
+export default async function logViewer(options = {}) {
   inquirer = await getInquirer();
   const git = simpleGit();
   let log;
@@ -21,7 +22,7 @@ export default async function logViewer(options) {
     });
 
   // Handle new modes
-  if (options.mode) {
+  if (options && options.mode) {
     let cmd = ["log"];
     if (options.mode === "oneline") cmd.push("--oneline");
     else if (options.mode === "graph")
@@ -29,9 +30,9 @@ export default async function logViewer(options) {
     else if (options.mode === "file" && options.filename)
       cmd.push(options.filename);
     else if (options.mode === "since" && options.time)
-      cmd.push(`--since="${options.time}"`);
+      cmd.push(`--since=\"${options.time}\"`);
     else if (options.mode === "author" && options.author)
-      cmd.push(`--author="${options.author}"`);
+      cmd.push(`--author=\"${options.author}\"`);
     else if (options.mode === "name-only") cmd.push("--name-only");
     else if (options.mode === "diff") cmd.push("-p");
     else if (options.mode === "limit" && options.n)

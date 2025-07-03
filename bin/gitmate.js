@@ -2,8 +2,9 @@
 
 import { program } from "commander";
 import figlet from "figlet";
+import fs from "fs";
+import path from "path";
 import packageJson from "../package.json" assert { type: "json" };
-import shortcut from "../src/commands/shortcut.js";
 
 // Command imports (to be implemented)
 import bisect from "../src/commands/bisect.js";
@@ -306,18 +307,51 @@ program
 
 program.exitOverride();
 
-try {
-  program.parse(process.argv);
-} catch (err) {
-  // If it's an unknown command, handle as shortcut
-  const knownCommands = [
-    'init', 'remote-init', 'st', 'status', 'save', 'undo', 'br', 'branch',
-    'del', 'db', 'delete-branch', 'stash', 'smart', 'ps', 'psf', 'psfl', 'psa', 'pst', 'psd', 'unst', 'unstage', 'reha', 'reset-hard', 'rere', 'reset-recover', 'help', 'rc-edit', 'log', 'l'
-  ];
-  const userCmd = process.argv[2];
-  if (userCmd && !knownCommands.includes(userCmd)) {
-    shortcut(userCmd, process.argv.slice(3));
-  } else {
-    throw err;
+// Helper to split command string into args (handles quotes)
+function parseArgs(str) {
+  const re = /(?:[^"]\S*|"[^"]*"|'[^']*')+/g;
+  const arr = [];
+  let match;
+  while ((match = re.exec(str)) !== null) {
+    arr.push(match[0].replace(/^['"]|['"]$/g, ""));
   }
+  return arr;
 }
+
+async function runShortcutIfExists() {
+  const rcPath = path.resolve(process.cwd(), ".gitmaterc");
+  if (!fs.existsSync(rcPath)) return false;
+  let config;
+  try {
+    config = JSON.parse(fs.readFileSync(rcPath, "utf8"));
+  } catch {
+    return false;
+  }
+  const shortcuts = config.shortcuts || {};
+  const userArg = process.argv[2];
+  if (userArg && shortcuts[userArg]) {
+    const shortcutCmd = shortcuts[userArg];
+    const args = parseArgs(shortcutCmd);
+    if (args[0] === "gmt") {
+      // Run as a Node.js process (cross-platform)
+      const { spawnSync } = await import("child_process");
+      const result = spawnSync(process.argv[0], [process.argv[1], ...args.slice(1)], {
+        stdio: "inherit",
+        shell: false,
+      });
+      process.exit(result.status || 0);
+    } else {
+      // Run as a shell command (cross-platform)
+      const { spawnSync } = await import("child_process");
+      const result = spawnSync(shortcutCmd, { stdio: "inherit", shell: true });
+      process.exit(result.status || 0);
+    }
+    return true;
+  }
+  return false;
+}
+
+(async () => {
+  if (await runShortcutIfExists()) return;
+  program.parseAsync(process.argv);
+})();
