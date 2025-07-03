@@ -3,6 +3,7 @@ import chalk from "chalk";
 import figlet from "figlet";
 import simpleGit from "simple-git";
 import { isGitRepo } from "./utils.js";
+import history from "./history.js";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
@@ -117,7 +118,9 @@ export default async function status() {
     next.push({ name: "Push (upload commits to remote)", value: "push" });
   }
   next.push({ name: "Log (view commit history)", value: "log" });
-  if (log.total && log.total > 0) {
+  // Only show Undo if there is a last action in history or at least one commit
+  const lastAction = history.getLastAction();
+  if (lastAction || (log.total && log.total > 0)) {
     next.push({ name: "Undo (soft reset last commit)", value: "undo" });
   }
 
