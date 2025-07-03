@@ -1,5 +1,6 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import ora from "ora";
 import simpleGit from "simple-git";
 let inquirer;
 async function getInquirer() {
@@ -8,29 +9,23 @@ async function getInquirer() {
 }
 export default async function push(remote, branch) {
   const git = simpleGit();
+  const spinner = ora({
+    text:
+      remote && branch
+        ? `Pushing to ${remote}/${branch}...`
+        : "Pushing to remote...",
+    color: "cyan",
+  }).start();
   try {
     if (remote && branch) {
       await git.push(remote, branch);
-      console.log(
-        boxen(chalk.green(`✔ Changes pushed to ${remote}/${branch}!`), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "green",
-          margin: 1,
-        })
-      );
+      spinner.succeed(`✔ Changes pushed to ${remote}/${branch}!`);
     } else {
       await git.push();
-      console.log(
-        boxen(chalk.green("✔ Changes pushed to remote!"), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "green",
-          margin: 1,
-        })
-      );
+      spinner.succeed("✔ Changes pushed to remote!");
     }
   } catch (err) {
+    spinner.fail("Push failed.");
     console.error(
       boxen(chalk.red("Error pushing: ") + err.message, {
         padding: 1,

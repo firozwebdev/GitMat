@@ -1,9 +1,14 @@
-const simpleGit = require("simple-git");
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const boxen = require("boxen");
-
-module.exports = async function cleanCommand() {
+import boxen from "boxen";
+import chalk from "chalk";
+import cliProgress from "cli-progress";
+import simpleGit from "simple-git";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+export default async function cleanCommand() {
+  inquirer = await getInquirer();
   const git = simpleGit();
   let status;
   try {
@@ -92,8 +97,25 @@ module.exports = async function cleanCommand() {
     );
     return;
   }
+  // Progress bar for file deletion
+  const bar = new cliProgress.SingleBar({
+    format: `${chalk.cyan(
+      "Cleaning"
+    )} |{bar}| {percentage}% || {value}/{total} files deleted`,
+    barCompleteChar: "\u2588",
+    barIncompleteChar: "\u2591",
+    hideCursor: true,
+  });
+  bar.start(untracked.length, 0);
+  let deletedCount = 0;
   try {
-    const { stdout } = await git.raw(["clean", "-fd"]);
+    // Delete each file individually to show progress
+    for (const file of untracked) {
+      await git.raw(["clean", "-f", file]);
+      deletedCount++;
+      bar.update(deletedCount);
+    }
+    bar.stop();
     console.log(
       boxen(chalk.green("✔ Untracked files deleted."), {
         padding: 1,
@@ -102,8 +124,8 @@ module.exports = async function cleanCommand() {
         margin: 1,
       })
     );
-    console.log(stdout);
   } catch (err) {
+    bar.stop();
     console.log(
       boxen(chalk.red(`Error: ${err.message}`), {
         padding: 1,
@@ -113,4 +135,4 @@ module.exports = async function cleanCommand() {
       })
     );
   }
-};
+}
