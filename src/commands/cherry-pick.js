@@ -1,5 +1,6 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import ora from "ora";
 import simpleGit from "simple-git";
 let inquirer;
 async function getInquirer() {
@@ -50,12 +51,18 @@ export default async function cherryPick() {
   if (!confirm) return;
   let results = "";
   for (const hash of picks) {
+    const spinner = ora({
+      text: `Cherry-picking ${hash.substr(0, 7)}...`,
+      color: "cyan",
+    }).start();
     try {
       await git.raw(["cherry-pick", hash]);
-      results += chalk.green(`✔ Cherry-picked ${hash.substr(0, 7)}\n`);
+      spinner.succeed(`Cherry-picked ${hash.substr(0, 7)}`);
+      results += chalk.green(`\u2714 Cherry-picked ${hash.substr(0, 7)}\n`);
     } catch (err) {
+      spinner.fail(`Failed to cherry-pick ${hash.substr(0, 7)}`);
       results += chalk.red(
-        `✗ Failed to cherry-pick ${hash.substr(0, 7)}: ${err.message}\n`
+        `\u2717 Failed to cherry-pick ${hash.substr(0, 7)}: ${err.message}\n`
       );
       break; // Stop on first failure
     }

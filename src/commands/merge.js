@@ -1,7 +1,8 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import ora from "ora";
 import simpleGit from "simple-git";
-let history;
+import history from "./history.js";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
@@ -32,6 +33,7 @@ export default async function mergeCommand(targetBranch) {
       },
     ]);
     branch = selected;
+    if (!branch) return; // User cancelled
   }
   // Show merge summary
   let ahead;
@@ -71,6 +73,10 @@ export default async function mergeCommand(targetBranch) {
     },
   ]);
   if (!confirm) return;
+  const spinner = ora({
+    text: `Merging '${branch}' into '${currentBranch}'...`,
+    color: "cyan",
+  }).start();
   try {
     await git.merge([branch]);
     history.addAction({
@@ -78,15 +84,9 @@ export default async function mergeCommand(targetBranch) {
       branch,
       preMergeHead: preMergeHead.trim(),
     });
-    console.log(
-      boxen(chalk.green(`✔ Merged '${branch}' into '${currentBranch}'`), {
-        padding: 1,
-        borderStyle: "round",
-        borderColor: "green",
-        margin: 1,
-      })
-    );
+    spinner.succeed(`✔ Merged '${branch}' into '${currentBranch}'`);
   } catch (err) {
+    spinner.fail("Merge failed");
     // Handle conflicts
     const mergeStatus = await git.status();
     if (mergeStatus.conflicted.length > 0) {
@@ -104,32 +104,33 @@ export default async function mergeCommand(targetBranch) {
         {
           type: "list",
           name: "action",
-          message:
-            "Resolve conflict: (Use arrow keys, Enter to select, Ctrl+C to cancel)",
+          message: "Resolve conflict:",
           choices: [
             { name: "Abort merge", value: "abort" },
             {
-              name: "Continue after resolving",
+              name: "I have resolved the conflicts manually. Continue.",
               value: "continue",
             },
           ],
         },
       ]);
       if (action === "abort") {
-        await git.merge(["--abort"]);
-        console.log(
-          boxen(chalk.yellow("Merge aborted"), {
-            padding: 1,
-            borderStyle: "round",
-            borderColor: "yellow",
-            margin: 1,
-          })
-        );
+        const abortSpinner = ora({
+          text: "Aborting merge...",
+          color: "yellow",
+        }).start();
+        try {
+          await git.merge(["--abort"]);
+          abortSpinner.succeed("Merge aborted.");
+        } catch (abortErr) {
+          abortSpinner.fail("Failed to abort merge.");
+          console.error(abortErr);
+        }
       } else {
         console.log(
           boxen(
             chalk.yellow(
-              "Please resolve conflicts, then run 'gmt merge' again to continue."
+              "Please add resolved files and commit them to finalize the merge."
             ),
             {
               padding: 1,
@@ -142,7 +143,7 @@ export default async function mergeCommand(targetBranch) {
       }
     } else {
       console.error(
-        boxen(chalk.red("Merge failed: ") + err.message, {
+        boxen(chalk.red(err.message), {
           padding: 1,
           borderStyle: "round",
           borderColor: "red",

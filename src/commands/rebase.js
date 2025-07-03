@@ -1,5 +1,6 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import ora from "ora";
 import simpleGit from "simple-git";
 let inquirer;
 async function getInquirer() {
@@ -56,19 +57,28 @@ export default async function rebase() {
       },
     ]);
     if (!confirm) return;
+    const spinner = ora({
+      text: `Rebasing ${branches.current} onto ${target}...`,
+      color: "cyan",
+    }).start();
     try {
       await git.rebase([target]);
+      spinner.succeed(`Rebased ${branches.current} onto ${target}`);
       console.log(
-        boxen(chalk.green(`✔ Rebased ${branches.current} onto ${target}`), {
-          padding: 1,
-          borderStyle: "round",
-          borderColor: "green",
-          margin: 1,
-          title: "Rebase Result",
-          titleAlignment: "center",
-        })
+        boxen(
+          chalk.green(`\u2714 Rebased ${branches.current} onto ${target}`),
+          {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "green",
+            margin: 1,
+            title: "Rebase Result",
+            titleAlignment: "center",
+          }
+        )
       );
     } catch (err) {
+      spinner.fail("Error during rebase");
       console.error(
         boxen(chalk.red("Error during rebase: ") + err.message, {
           padding: 1,
@@ -98,11 +108,18 @@ export default async function rebase() {
       },
     ]);
     if (!confirm) return;
+    const spinner = ora({
+      text: `Starting interactive rebase for last ${n} commits...`,
+      color: "cyan",
+    }).start();
     try {
       await git.raw(["rebase", "-i", `HEAD~${n}`]);
+      spinner.succeed(`Interactive rebase started for last ${n} commits.`);
       console.log(
         boxen(
-          chalk.green(`✔ Interactive rebase started for last ${n} commits.`),
+          chalk.green(
+            `\u2714 Interactive rebase started for last ${n} commits.`
+          ),
           {
             padding: 1,
             borderStyle: "round",
@@ -114,6 +131,7 @@ export default async function rebase() {
         )
       );
     } catch (err) {
+      spinner.fail("Error during interactive rebase");
       console.error(
         boxen(chalk.red("Error during interactive rebase: ") + err.message, {
           padding: 1,
