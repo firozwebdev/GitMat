@@ -1,5 +1,6 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import ora from "ora";
 import simpleGit from "simple-git";
 let inquirer;
 async function getInquirer() {
@@ -52,11 +53,16 @@ export default async function bisect() {
           message: "Enter known bad commit (hash, tag, or ref):",
         },
       ]);
+      const spinner = ora({
+        text: `Starting bisect...`,
+        color: "cyan",
+      }).start();
       try {
         await git.raw(["bisect", "start", bad, good]);
         bisectActive = true;
+        spinner.succeed("Bisect started!");
         console.log(
-          boxen(chalk.green("✔ Bisect started!"), {
+          boxen(chalk.green("\u2714 Bisect started!"), {
             padding: 1,
             borderStyle: "round",
             borderColor: "green",
@@ -66,6 +72,7 @@ export default async function bisect() {
           })
         );
       } catch (err) {
+        spinner.fail("Error starting bisect");
         console.error(
           boxen(chalk.red("Error starting bisect: ") + err.message, {
             padding: 1,
@@ -76,10 +83,15 @@ export default async function bisect() {
         );
       }
     } else if (action === "good" || action === "bad") {
+      const spinner = ora({
+        text: `Marking current commit as ${action}...`,
+        color: "cyan",
+      }).start();
       try {
         await git.raw(["bisect", action]);
+        spinner.succeed(`Marked current commit as ${action}`);
         console.log(
-          boxen(chalk.green(`✔ Marked current commit as ${action}`), {
+          boxen(chalk.green(`\u2714 Marked current commit as ${action}`), {
             padding: 1,
             borderStyle: "round",
             borderColor: "green",
@@ -89,6 +101,7 @@ export default async function bisect() {
           })
         );
       } catch (err) {
+        spinner.fail(`Error marking commit as ${action}`);
         console.error(
           boxen(chalk.red("Error marking commit: ") + err.message, {
             padding: 1,
@@ -122,11 +135,16 @@ export default async function bisect() {
         );
       }
     } else if (action === "reset") {
+      const spinner = ora({
+        text: `Resetting bisect...`,
+        color: "cyan",
+      }).start();
       try {
         await git.raw(["bisect", "reset"]);
         bisectActive = false;
+        spinner.succeed("Bisect reset!");
         console.log(
-          boxen(chalk.green("✔ Bisect reset!"), {
+          boxen(chalk.green("\u2714 Bisect reset!"), {
             padding: 1,
             borderStyle: "round",
             borderColor: "green",
@@ -136,6 +154,7 @@ export default async function bisect() {
           })
         );
       } catch (err) {
+        spinner.fail("Error resetting bisect");
         console.error(
           boxen(chalk.red("Error resetting bisect: ") + err.message, {
             padding: 1,

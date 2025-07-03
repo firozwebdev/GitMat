@@ -1,10 +1,15 @@
-const inquirer = require("inquirer");
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const history = require("./history");
-
-module.exports = async function mergeCommand(targetBranch) {
+import simpleGit from "simple-git";
+import chalk from "chalk";
+import boxen from "boxen";
+import ora from "ora";
+import history from "./history.js";
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+export default async function mergeCommand(targetBranch) {
+  inquirer = await getInquirer();
   const git = simpleGit();
   // Get current branch
   const status = await git.status();
@@ -56,6 +61,7 @@ module.exports = async function mergeCommand(targetBranch) {
   ]);
   if (!confirm) return;
 
+  const spinner = ora({ text: `Merging '${branch}' into '${currentBranch}'...`, color: "cyan" }).start();
   try {
     await git.merge([branch]);
     history.addAction({
@@ -63,24 +69,16 @@ module.exports = async function mergeCommand(targetBranch) {
       branch,
       preMergeHead: preMergeHead.trim(),
     });
-    console.log(
-      boxen(chalk.green(`✔ Merged '${branch}' into '${currentBranch}'`), {
-        padding: 1,
-        borderStyle: "round",
-        borderColor: "green",
-        margin: 1,
-      })
-    );
+    spinner.succeed(`✔ Merged '${branch}' into '${currentBranch}'`);
   } catch (err) {
     // Handle conflicts
     const mergeStatus = await git.status();
+    spinner.stop();
     if (mergeStatus.conflicted.length > 0) {
       console.log(
         boxen(
           chalk.red(
-            `Merge conflict detected! (মার্জ কনফ্লিক্ট হয়েছে!)\nConflicted files: ${mergeStatus.conflicted.join(
-              ", "
-            )}`
+            `Merge conflict detected! (মার্জ কনফ্লিক্ট হয়েছে!)\nConflicted files: ${mergeStatus.conflicted.join(", ")}`
           ),
           { padding: 1, borderStyle: "round", borderColor: "red", margin: 1 }
         )
@@ -135,4 +133,4 @@ module.exports = async function mergeCommand(targetBranch) {
       );
     }
   }
-};
+}
