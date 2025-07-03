@@ -34,17 +34,27 @@ export default async function mergeCommand(targetBranch) {
     branch = selected;
   }
   // Show merge summary
-  const { stdout: ahead } = await git.raw([
-    "rev-list",
-    "--left-right",
-    "--count",
-    `${currentBranch}...${branch}`,
-  ]);
-  const [behindCount, aheadCount] = ahead.trim().split("\t");
+  let ahead;
+  try {
+    // git.raw returns stdout directly.
+    ahead = await git.raw([
+      "rev-list",
+      "--left-right",
+      "--count",
+      `${currentBranch}...${branch}`,
+    ]);
+  } catch (e) {
+    // This can fail if branches are identical or one is invalid.
+    // Default to 0 commits to show and let the user decide.
+    ahead = "0\t0";
+  }
+  const [behindCount] = (ahead || "0\t0").trim().split("\t");
   console.log(
     boxen(
       chalk.cyan(
-        `Merging '${branch}' into '${currentBranch}'\nCommits to merge: ${behindCount}`
+        `Merging '${branch}' into '${currentBranch}'\nCommits to merge: ${
+          behindCount || 0
+        }`
       ),
       { padding: 1, borderStyle: "round", borderColor: "cyan", margin: 1 }
     )
