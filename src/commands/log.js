@@ -8,7 +8,7 @@ async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
   return inquirer;
 }
-export default async function logViewer(options = {}) {
+export default async function logViewer(options = {}, parentMenu) {
   if (!isGitRepo()) {
     console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
     process.exit(1);
@@ -87,6 +87,7 @@ export default async function logViewer(options = {}) {
         err.message && err.message.includes("does not have any commits yet") ? "yellow" : "red"
       )
     );
+    if (parentMenu) await parentMenu();
     return;
   }
 
@@ -138,6 +139,7 @@ export default async function logViewer(options = {}) {
         value: i,
       });
     }
+    choices.push({ name: "Back", value: "back" });
     choices.push({ name: "Exit (select and press Enter)", value: "exit" });
 
     const { action } = await inquirer.prompt([
@@ -145,7 +147,7 @@ export default async function logViewer(options = {}) {
         type: "list",
         name: "action",
         message:
-          "Select an action: (Use arrow keys to select, Enter to confirm, Ctrl+C to quit.)",
+          "Select an action: (Use arrow keys to select, Enter to confirm, Back to return, Ctrl+C to quit.)",
         choices,
         pageSize: 15,
       },
@@ -157,6 +159,9 @@ export default async function logViewer(options = {}) {
       page--;
     } else if (action === "exit") {
       exit = true;
+    } else if (action === "back") {
+      if (parentMenu) await parentMenu();
+      return;
     } else if (typeof action === "number") {
       const c = commits[action];
       let msg = "";
@@ -183,14 +188,24 @@ export default async function logViewer(options = {}) {
       console.log(
         chalkBox(msg, "magenta", `Commit Details #${action + 1}`, "magenta")
       );
-      // Wait for user to continue
-      await inquirer.prompt([
+      // Wait for user to continue or go back
+      const { cont } = await inquirer.prompt([
         {
-          type: "input",
+          type: "list",
           name: "cont",
-          message: "Press Enter to return to log...",
+          message: "Press Enter to return to log, or Back to return to previous menu:",
+          choices: [
+            { name: "Back", value: "back" },
+            { name: "Return to log", value: "log" },
+          ],
         },
       ]);
+      if (cont === "back") {
+        if (parentMenu) await parentMenu();
+        return;
+      }
+      // Otherwise, just return to log view
     }
   }
+  if (parentMenu) await parentMenu();
 }

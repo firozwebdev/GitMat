@@ -42,7 +42,7 @@ export default async function status() {
 
   // Banner
   const banner = chalk.cyan(
-    figlet.textSync("GitMate", { horizontalLayout: "default", width: 60 })
+    figlet.textSync("GitMat", { horizontalLayout: "default", width: 60 })
   );
 
   let output = "";
@@ -164,7 +164,7 @@ export default async function status() {
     margin: 1,
     borderStyle: "round",
     borderColor: "cyan",
-    title: "GitMate Status",
+    title: "GitMat Status",
     titleAlignment: "center",
   });
 
@@ -204,19 +204,32 @@ export default async function status() {
         {
           type: "input",
           name: "file",
-          message: "Enter the file to unstage:",
+          message: "Enter the file to unstage (or leave blank to go back):",
         },
       ]);
+      if (!file) return await status();
       const unstageCmd = (await import("./unstage.js")).default;
       await unstageCmd(file);
+      return await status();
     } else if (action === "reset-staged") {
       // Discard all staged changes
+      const { confirm } = await inquirer.prompt([
+        {
+          type: "confirm",
+          name: "confirm",
+          message: "Are you sure you want to discard all staged changes? This cannot be undone!",
+          default: false,
+        },
+      ]);
+      if (!confirm) return await status();
       const resetHardCmd = (await import("./reset-hard.js")).default;
       await resetHardCmd();
+      return await status();
     } else if (action === "stage-all") {
       // Stage all changes
       await git.add(".");
       console.log(boxen(chalk.green("✔ All changes staged."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+      return await status();
     } else if (action === "discard-changes") {
       // Discard all unstaged changes
       const { confirm } = await inquirer.prompt([
@@ -227,60 +240,73 @@ export default async function status() {
           default: false,
         },
       ]);
-      if (confirm) {
-        await git.checkout(["--", "."]);
-        console.log(boxen(chalk.green("✔ All unstaged changes discarded."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
-      } else {
-        console.log(boxen(chalk.yellow("Discard cancelled."), { padding: 1, borderStyle: "round", borderColor: "yellow", margin: 1 }));
-      }
+      if (!confirm) return await status();
+      await git.checkout(["--", "."]);
+      console.log(boxen(chalk.green("✔ All unstaged changes discarded."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+      return await status();
     } else if (action === "add-untracked") {
       // Add all untracked files
       await git.add(gitStatus.not_added);
       console.log(boxen(chalk.green("✔ Untracked files added."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+      return await status();
     } else if (action === "ignore-files") {
       // Open rc-edit for .gitignore
       const rcEditCmd = (await import("./rc-edit.js")).default;
       await rcEditCmd();
+      return await status();
     } else if (action === "clean-untracked") {
       // Remove untracked files
       const cleanCmd = (await import("./clean.js")).default;
       await cleanCmd();
+      return await status();
     } else if (action === "apply-stash") {
       // Apply latest stash
       if (stashes.all.length > 0) {
         await git.stash(["pop"]);
         console.log(boxen(chalk.green("✔ Latest stash applied."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
       }
+      return await status();
     } else if (action === "manage-stash") {
       // Open stash manager
       const stashCmd = (await import("./stash.js")).default;
       await stashCmd();
+      return await status();
     } else if (action === "push") {
       await (await getPushCmd())();
+      return await status();
     } else if (action === "push-all") {
       const psaCmd = (await import("./psa.js")).default;
       await psaCmd();
+      return await status();
     } else if (action === "pull") {
       const fetchCmd = (await import("./fetch.js")).default;
       await fetchCmd();
+      return await status();
     } else if (action === "switch-branch") {
       const branchCmd = (await import("./branch.js")).default;
       await branchCmd();
+      return await status();
     } else if (action === "create-branch") {
       const branchCmd = (await import("./branch.js")).default;
       await branchCmd();
+      return await status();
     } else if (action === "delete-branch") {
       const deleteBranchCmd = (await import("./delete-branch.js")).default;
       await deleteBranchCmd();
+      return await status();
     } else if (action === "merge-branch") {
       const mergeCmd = (await import("./merge.js")).default;
       await mergeCmd();
+      return await status();
     } else if (action === "undo") {
       await (await getUndoCmd())();
+      return await status();
     } else if (action === "log") {
-      await (await getLogCmd())();
+      const logCmd = await getLogCmd();
+      await logCmd({}, status);
+      return await status();
     } else if (action === "status") {
-      await status();
+      return await status();
     } else {
       // Exit
       return;
