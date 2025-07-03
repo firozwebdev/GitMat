@@ -1,5 +1,6 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import ora from "ora";
 import simpleGit from "simple-git";
 let inquirer;
 async function getInquirer() {
@@ -36,6 +37,10 @@ export default async function fetchCommand(remoteArg) {
     ]);
     remote = selected === "All remotes" ? null : selected;
   }
+  const spinner = ora({
+    text: `Fetching${remote ? ` from ${remote}` : " from all remotes"}...`,
+    color: "cyan",
+  }).start();
   try {
     let fetchResult;
     if (!remote) {
@@ -43,14 +48,7 @@ export default async function fetchCommand(remoteArg) {
     } else {
       fetchResult = await git.fetch(remote);
     }
-    console.log(
-      boxen(chalk.green("✔ Fetch complete."), {
-        padding: 1,
-        borderStyle: "round",
-        borderColor: "green",
-        margin: 1,
-      })
-    );
+    spinner.succeed("✔ Fetch complete.");
     // Show summary of changes
     const status = await git.status();
     let summary = `Current branch: ${status.current}\n`;
@@ -66,6 +64,7 @@ export default async function fetchCommand(remoteArg) {
       })
     );
   } catch (err) {
+    spinner.fail("Fetch failed.");
     console.log(
       boxen(chalk.red(`Error: ${err.message}`), {
         padding: 1,
