@@ -14,6 +14,7 @@ import deleteBranch from "../src/commands/delete-branch.js";
 import fetchCmd from "../src/commands/fetch.js";
 import init from "../src/commands/init.js";
 import logViewer from "../src/commands/log.js";
+import merge from "../src/commands/merge.js";
 import psa from "../src/commands/psa.js";
 import psd from "../src/commands/psd.js";
 import psf from "../src/commands/psf.js";
@@ -242,6 +243,11 @@ program
   .command("fetch [remote]")
   .description("Fetch all or a specific remote, show summary, suggest next actions")
   .action((remote) => fetchCmd(remote));
+
+program
+  .command("merge [branch]")
+  .description("Merge a branch into the current branch (interactive if no branch specified)")
+  .action((branch) => merge(branch));
 
 program
   .command("help")

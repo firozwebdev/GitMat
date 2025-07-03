@@ -1,15 +1,23 @@
-const inquirer = require("inquirer");
-const simpleGit = require("simple-git");
-const chalk = require("chalk");
-const boxen = require("boxen");
-const history = require("./history");
-
-module.exports = async function mergeCommand(targetBranch) {
+import boxen from "boxen";
+import chalk from "chalk";
+import simpleGit from "simple-git";
+let history;
+let inquirer;
+async function getInquirer() {
+  if (!inquirer) inquirer = (await import("inquirer")).default;
+  return inquirer;
+}
+async function getHistory() {
+  if (!history) history = (await import("./history.js")).default;
+  return history;
+}
+export default async function mergeCommand(targetBranch) {
   const git = simpleGit();
+  const inquirer = await getInquirer();
+  const history = await getHistory();
   // Get current branch
   const status = await git.status();
   const currentBranch = status.current;
-
   // Get list of branches
   const branches = (await git.branch()).all.filter((b) => b !== currentBranch);
   let branch = targetBranch;
@@ -18,13 +26,13 @@ module.exports = async function mergeCommand(targetBranch) {
       {
         type: "list",
         name: "selected",
-        message: "Select branch to merge (মার্জ করতে ব্রাঞ্চ নির্বাচন করুন)",
+        message:
+          "Select branch to merge: (Use arrow keys, Enter to select, Ctrl+C to cancel)",
         choices: branches,
       },
     ]);
     branch = selected;
   }
-
   // Show merge summary
   const { stdout: ahead } = await git.raw([
     "rev-list",
@@ -41,21 +49,18 @@ module.exports = async function mergeCommand(targetBranch) {
       { padding: 1, borderStyle: "round", borderColor: "cyan", margin: 1 }
     )
   );
-
   // Save pre-merge HEAD for undo
   const { stdout: preMergeHead } = await git.raw(["rev-parse", "HEAD"]);
-
   // Confirm merge
   const { confirm } = await inquirer.prompt([
     {
       type: "confirm",
       name: "confirm",
-      message: `Proceed with merge? (মার্জ করতে চান?)`,
+      message: `Proceed with merge?`,
       default: true,
     },
   ]);
   if (!confirm) return;
-
   try {
     await git.merge([branch]);
     history.addAction({
@@ -78,7 +83,7 @@ module.exports = async function mergeCommand(targetBranch) {
       console.log(
         boxen(
           chalk.red(
-            `Merge conflict detected! (মার্জ কনফ্লিক্ট হয়েছে!)\nConflicted files: ${mergeStatus.conflicted.join(
+            `Merge conflict detected!\nConflicted files: ${mergeStatus.conflicted.join(
               ", "
             )}`
           ),
@@ -89,11 +94,12 @@ module.exports = async function mergeCommand(targetBranch) {
         {
           type: "list",
           name: "action",
-          message: "Resolve conflict: (সমস্যা সমাধান করুন)",
+          message:
+            "Resolve conflict: (Use arrow keys, Enter to select, Ctrl+C to cancel)",
           choices: [
-            { name: "Abort merge (মার্জ বাতিল)", value: "abort" },
+            { name: "Abort merge", value: "abort" },
             {
-              name: "Continue after resolving (সমাধানের পর চালিয়ে যান)",
+              name: "Continue after resolving",
               value: "continue",
             },
           ],
@@ -102,7 +108,7 @@ module.exports = async function mergeCommand(targetBranch) {
       if (action === "abort") {
         await git.merge(["--abort"]);
         console.log(
-          boxen(chalk.yellow("Merge aborted (মার্জ বাতিল হয়েছে)"), {
+          boxen(chalk.yellow("Merge aborted"), {
             padding: 1,
             borderStyle: "round",
             borderColor: "yellow",
@@ -135,4 +141,4 @@ module.exports = async function mergeCommand(targetBranch) {
       );
     }
   }
-};
+}
