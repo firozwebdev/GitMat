@@ -16,8 +16,60 @@ npm install -g gitmat
 After installation, you can use the following commands anywhere:
 
 - `gitmat` (main command)
-- `gm` (alias)
 - `gmt` (alias, recommended for speed)
+- `gm` (alias, but may conflict with other tools)
+
+---
+
+## ⚡ Optional: Add a `gt` Shortcut (Recommended)
+
+You can add a `gt` shortcut for even faster access. Here's how:
+
+### Windows (PowerShell & CMD)
+
+**Create a `gt.cmd` script in your global npm bin directory:**
+
+Open PowerShell and run:
+
+```powershell
+Set-Content "$env:APPDATA\npm\gt.cmd" "@echo off`r`ngmt %*"
+```
+
+Now you can use `gt` in any PowerShell or Command Prompt window:
+
+```powershell
+gt --version
+gt status
+```
+
+---
+
+### Bash (Git Bash, Linux, macOS)
+
+#### Option 1: Add a Bash Alias (Quick & Easy)
+
+Add this to your `~/.bashrc` (or `~/.bash_profile` on macOS):
+
+```bash
+echo "alias gt='gmt'" >> ~/.bashrc && source ~/.bashrc
+```
+
+#### Option 2: Create a Script (Works Everywhere)
+
+If you want `gt` to work in all Bash shells, create a script:
+
+```bash
+echo -e '#!/bin/sh\ngmt "$@"' | sudo tee /usr/local/bin/gt > /dev/null && sudo chmod +x /usr/local/bin/gt
+```
+
+Now you can use `gt` in any Bash terminal:
+
+```bash
+gt --version
+gt status
+```
+
+---
 
 > **Note:** If you previously installed GitMat locally (e.g., via `npm link` or by copying files to your PATH), please uninstall or remove those versions to avoid conflicts. Only the global npm installation is supported for production use.
 

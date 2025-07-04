@@ -23,8 +23,9 @@
   "license": "ISC",
   "description": "",
   "bin": {
-    "gitmat": "./bin/gitmat.js",
-    "gmt": "./bin/gmt.cmd",
+    "gitmat": "./bin/gitmate.js",
+    "gmt": "./bin/gitmate.js",
+    "gt": "./bin/gitmate.js",
     "rc-edit": "./bin/rc-edit"
   },
   "dependencies": {

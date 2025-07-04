@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
+import boxen from "boxen";
+import chalk from "chalk";
 import { program } from "commander";
 import figlet from "figlet";
 import fs from "fs";
 import path from "path";
-import packageJson from "../package.json" assert { type: "json" };
-import chalk from "chalk";
-import boxen from "boxen";
+import { fileURLToPath } from "url";
 
 // Command imports (to be implemented)
 import bisect from "../src/commands/bisect.js";
@@ -37,18 +37,24 @@ import tag from "../src/commands/tag.js";
 import undo from "../src/commands/undo.js";
 import unstage from "../src/commands/unstage.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const packageJson = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, "../package.json"), "utf8")
+);
+
 program
-  .name("gitmate")
+  .name("gitmat")
   .description("Your smart Git companion")
   .version(packageJson.version);
 
 program
-  .command('st')
-  .description('Enhanced git status (banner, box, color)')
+  .command("st")
+  .description("Enhanced git status (banner, box, color)")
   .action(status);
 program
-  .command('status')
-  .description('Enhanced git status (banner, box, color)')
+  .command("status")
+  .description("Enhanced git status (banner, box, color)")
   .action(status);
 
 program
@@ -123,198 +129,282 @@ program
 
 program
   .command("rc-edit")
-  .description('Create or edit .gitmaterc shortcuts interactively')
+  .description("Create or edit .gitmaterc shortcuts interactively")
   .action(rcEdit);
 
 program
-  .command('log')
-  .description('Pretty, colorized, paginated git log with commit details (alias for l)')
+  .command("log")
+  .description(
+    "Pretty, colorized, paginated git log with commit details (alias for l)"
+  )
   .action(() => logViewer());
 program
-  .command('lo')
-  .description('Show git log --oneline (shortcut for log oneline)')
-  .action(() => logViewer({ mode: 'oneline' }));
+  .command("lo")
+  .description("Show git log --oneline (shortcut for log oneline)")
+  .action(() => logViewer({ mode: "oneline" }));
 program
-  .command('log-graph')
-  .description('Show git log --oneline --graph --all')
-  .action(() => logViewer({ mode: 'graph' }));
+  .command("log-graph")
+  .description("Show git log --oneline --graph --all")
+  .action(() => logViewer({ mode: "graph" }));
 program
-  .command('log-file <filename>')
-  .description('Show git log for a specific file')
-  .action((filename) => logViewer({ mode: 'file', filename }));
+  .command("log-file <filename>")
+  .description("Show git log for a specific file")
+  .action((filename) => logViewer({ mode: "file", filename }));
 program
-  .command('log-since <time>')
+  .command("log-since <time>")
   .description('Show git log --since="<time>"')
-  .action((time) => logViewer({ mode: 'since', time }));
+  .action((time) => logViewer({ mode: "since", time }));
 program
-  .command('log-author <author>')
+  .command("log-author <author>")
   .description('Show git log --author="<author>"')
-  .action((author) => logViewer({ mode: 'author', author }));
+  .action((author) => logViewer({ mode: "author", author }));
 program
-  .command('log-name-only')
-  .description('Show git log --name-only')
-  .action(() => logViewer({ mode: 'name-only' }));
+  .command("log-name-only")
+  .description("Show git log --name-only")
+  .action(() => logViewer({ mode: "name-only" }));
 program
-  .command('ldi')
-  .description('Show git log -p')
-  .action(() => logViewer({ mode: 'diff' }));
+  .command("ldi")
+  .description("Show git log -p")
+  .action(() => logViewer({ mode: "diff" }));
 program
-  .command('log-limit <n>')
-  .description('Show git log -n <n>')
-  .action((n) => logViewer({ mode: 'limit', n }));
+  .command("log-limit <n>")
+  .description("Show git log -n <n>")
+  .action((n) => logViewer({ mode: "limit", n }));
 program
-  .command('log-format <format>')
+  .command("log-format <format>")
   .description('Show git log --pretty=format:"<format>"')
-  .action((format) => logViewer({ mode: 'format', format }));
+  .action((format) => logViewer({ mode: "format", format }));
 
+program.command("psf").description("Force push (git push --force)").action(psf);
 program
-  .command('psf')
-  .description('Force push (git push --force)')
-  .action(psf);
-program
-  .command('psfl')
-  .description('Force push with lease (git push --force-with-lease)')
+  .command("psfl")
+  .description("Force push with lease (git push --force-with-lease)")
   .action(psfl);
 program
-  .command('psa')
-  .description('Push all branches (git push --all origin)')
+  .command("psa")
+  .description("Push all branches (git push --all origin)")
   .action(psa);
 program
-  .command('pst')
-  .description('Push all tags (git push --tags)')
+  .command("pst")
+  .description("Push all tags (git push --tags)")
   .action(pst);
 program
-  .command('psd <branch>')
-  .description('Delete remote branch (git push origin --delete <branch>)')
+  .command("psd <branch>")
+  .description("Delete remote branch (git push origin --delete <branch>)")
   .action(psd);
 
 program
-  .command('unst <file>')
-  .description('Unstage a file (git reset HEAD <file>)')
+  .command("unst <file>")
+  .description("Unstage a file (git reset HEAD <file>)")
   .action(unstage);
 program
-  .command('reha')
-  .description('Hard reset to previous commit (git reset --hard HEAD~1)')
+  .command("reha")
+  .description("Hard reset to previous commit (git reset --hard HEAD~1)")
   .action(resetHard);
 program
-  .command('rere')
-  .description('Recover from bad reset (git reset --hard ORIG_HEAD)')
+  .command("rere")
+  .description("Recover from bad reset (git reset --hard ORIG_HEAD)")
   .action(resetRecover);
 
 program
-  .command('quick')
-  .description('Quick menu for all major git actions (interactive palette)')
+  .command("quick")
+  .description("Quick menu for all major git actions (interactive palette)")
   .action(quick);
 
 program
-  .command('chpi')
-  .description('Interactively cherry-pick commit(s) from any branch (shortcut for cherry-pick)')
+  .command("chpi")
+  .description(
+    "Interactively cherry-pick commit(s) from any branch (shortcut for cherry-pick)"
+  )
   .action(cherryPick);
 
 program
-  .command('rebase')
-  .description('Interactively rebase onto a branch or rebase last N commits')
+  .command("rebase")
+  .description("Interactively rebase onto a branch or rebase last N commits")
   .action(rebase);
 
 program
-  .command('rbs')
-  .description('Interactively rebase onto a branch or rebase last N commits (shortcut for rebase)')
+  .command("rbs")
+  .description(
+    "Interactively rebase onto a branch or rebase last N commits (shortcut for rebase)"
+  )
   .action(rebase);
 
 program
-  .command('bisect')
-  .description('Interactive git bisect wizard (find commit that introduced a bug)')
+  .command("bisect")
+  .description(
+    "Interactive git bisect wizard (find commit that introduced a bug)"
+  )
   .action(bisect);
 
 program
-  .command('bsc')
-  .description('Interactive git bisect wizard (shortcut for bisect)')
+  .command("bsc")
+  .description("Interactive git bisect wizard (shortcut for bisect)")
   .action(bisect);
 
 program
-  .command('tag')
-  .description('Interactive tag management (list, create, delete, push tags)')
+  .command("tag")
+  .description("Interactive tag management (list, create, delete, push tags)")
   .action(tag);
 
 program
-  .command('tg')
-  .description('Interactive tag management (shortcut for tag)')
+  .command("tg")
+  .description("Interactive tag management (shortcut for tag)")
   .action(tag);
 
 program
   .command("fetch [remote]")
-  .description("Fetch all or a specific remote, show summary, suggest next actions")
+  .description(
+    "Fetch all or a specific remote, show summary, suggest next actions"
+  )
   .action((remote) => fetchCmd(remote));
 
 program
   .command("merge [branch]")
-  .description("Merge a branch into the current branch (interactive if no branch specified)")
+  .description(
+    "Merge a branch into the current branch (interactive if no branch specified)"
+  )
   .action((branch) => merge(branch));
 
 program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
-    const banner = figlet.textSync('GitMate', { horizontalLayout: 'default', width: 60 });
+    const banner = figlet.textSync("GitMate", {
+      horizontalLayout: "default",
+      width: 60,
+    });
     const cyan = (msg) => `\x1b[36m${msg}\x1b[0m`;
     const yellow = (msg) => `\x1b[33m${msg}\x1b[0m`;
     const green = (msg) => `\x1b[32m${msg}\x1b[0m`;
     const magenta = (msg) => `\x1b[35m${msg}\x1b[0m`;
     const white = (msg) => `\x1b[37m${msg}\x1b[0m`;
     console.log(`\n${cyan(banner)}`);
-    console.log(magenta('Your smart Git companion\n'));
-    console.log(yellow('USAGE:') + '    ' + white('gmt <command> [options]\n'));
-    console.log(green('Core Commands:'));
-    console.log('  ' + cyan('init') + '                Initialize a git repository');
-    console.log('  ' + cyan('remote-init') + '         Add remote, set main branch, and push to origin main');
-    console.log('  ' + cyan('st') + ',' + cyan(' status') + '         Enhanced git status (banner, box, color)');
-    console.log('  ' + cyan('save [msg]') + '           Stage all changes and commit (default: "savepoint")');
-    console.log('  ' + cyan('undo') + '                Undo last commit (with confirmation)');
-    console.log('');
-    console.log(green('Branch Management:'));
-    console.log('  ' + cyan('br') + ',' + cyan(' branch') + '         Interactive branch switcher (table, create, switch)');
-    console.log('  ' + cyan('del [branch]') + ',' + cyan(' db [branch]') + '  Delete a branch by name (with confirmation)');
-    console.log('  ' + cyan('delete-branch') + '         Interactively delete a branch');
-    console.log('');
-    console.log(green('Stash & Smart:'));
-    console.log('  ' + cyan('stash') + '               Interactive stash manager (create, list, apply, drop, view)');
-    console.log('  ' + cyan('smart') + '               Smart contextual actions based on repo state');
-    console.log('');
-    console.log(green('Remote:'));
-    console.log('  ' + cyan('ps [remote] [branch]') + '  Push current branch to remote, or specify remote and branch');
-    console.log('');
-    console.log(green('Other:'));
-    console.log('  ' + cyan('help') + '                Show this help message');
-    console.log('  rc-edit          Create or edit .gitmaterc shortcuts interactively');
-    console.log('  <shortcut>       Run a custom shortcut from .gitmaterc');
-    console.log('  l, log                Pretty, colorized, paginated git log with commit details');
-    console.log('  lo, log oneline        Show git log --oneline (one-line log)');
-    console.log('  ldi, log diff          Show git log -p (log with diffs)');
-    console.log('');
-    console.log(yellow('EXAMPLES:'));
-    console.log('  ' + white('gmt st'));
-    console.log('  ' + white('gmt save "Initial commit"'));
-    console.log('  ' + white('gmt br'));
-    console.log('  ' + white('gmt del feature-branch'));
-    console.log('  ' + white('gmt stash'));
-    console.log('  ' + white('gmt smart'));
-    console.log('  ' + white('gmt ps origin main'));
-    console.log('  ' + white('gmt remote-init'));
-    console.log('');
-    console.log(magenta('For more details, see the README.md.'));
-    console.log('  psf             Force push (git push --force)');
-    console.log('  psfl            Force push with lease (git push --force-with-lease)');
-    console.log('  psa             Push all branches (git push --all origin)');
-    console.log('  pst             Push all tags (git push --tags)');
-    console.log('  psd <branch>    Delete remote branch (git push origin --delete <branch>)');
-    console.log('  unst <file>, unstage <file>   Unstage a file (git reset HEAD <file>)');
-    console.log('  reha, reset-hard              Hard reset to previous commit (git reset --hard HEAD~1)');
-    console.log('  rere, reset-recover           Recover from bad reset (git reset --hard ORIG_HEAD)');
-    console.log('  quick                 Quick menu for all major git actions (interactive palette)');
-    console.log('  cherry-pick, chpi     Interactively cherry-pick commit(s) from any branch');
-    console.log('  rebase, rbs           Interactively rebase onto a branch or rebase last N commits');
-    console.log('  bisect, bsc           Interactive git bisect wizard (find commit that introduced a bug)');
-    console.log('  tag, tg               Interactive tag management (list, create, delete, push tags)');
+    console.log(magenta("Your smart Git companion\n"));
+    console.log(yellow("USAGE:") + "    " + white("gmt <command> [options]\n"));
+    console.log(green("Core Commands:"));
+    console.log(
+      "  " + cyan("init") + "                Initialize a git repository"
+    );
+    console.log(
+      "  " +
+        cyan("remote-init") +
+        "         Add remote, set main branch, and push to origin main"
+    );
+    console.log(
+      "  " +
+        cyan("st") +
+        "," +
+        cyan(" status") +
+        "         Enhanced git status (banner, box, color)"
+    );
+    console.log(
+      "  " +
+        cyan("save [msg]") +
+        '           Stage all changes and commit (default: "savepoint")'
+    );
+    console.log(
+      "  " +
+        cyan("undo") +
+        "                Undo last commit (with confirmation)"
+    );
+    console.log("");
+    console.log(green("Branch Management:"));
+    console.log(
+      "  " +
+        cyan("br") +
+        "," +
+        cyan(" branch") +
+        "         Interactive branch switcher (table, create, switch)"
+    );
+    console.log(
+      "  " +
+        cyan("del [branch]") +
+        "," +
+        cyan(" db [branch]") +
+        "  Delete a branch by name (with confirmation)"
+    );
+    console.log(
+      "  " + cyan("delete-branch") + "         Interactively delete a branch"
+    );
+    console.log("");
+    console.log(green("Stash & Smart:"));
+    console.log(
+      "  " +
+        cyan("stash") +
+        "               Interactive stash manager (create, list, apply, drop, view)"
+    );
+    console.log(
+      "  " +
+        cyan("smart") +
+        "               Smart contextual actions based on repo state"
+    );
+    console.log("");
+    console.log(green("Remote:"));
+    console.log(
+      "  " +
+        cyan("ps [remote] [branch]") +
+        "  Push current branch to remote, or specify remote and branch"
+    );
+    console.log("");
+    console.log(green("Other:"));
+    console.log("  " + cyan("help") + "                Show this help message");
+    console.log(
+      "  rc-edit          Create or edit .gitmaterc shortcuts interactively"
+    );
+    console.log("  <shortcut>       Run a custom shortcut from .gitmaterc");
+    console.log(
+      "  l, log                Pretty, colorized, paginated git log with commit details"
+    );
+    console.log(
+      "  lo, log oneline        Show git log --oneline (one-line log)"
+    );
+    console.log("  ldi, log diff          Show git log -p (log with diffs)");
+    console.log("");
+    console.log(yellow("EXAMPLES:"));
+    console.log("  " + white("gmt st"));
+    console.log("  " + white('gmt save "Initial commit"'));
+    console.log("  " + white("gmt br"));
+    console.log("  " + white("gmt del feature-branch"));
+    console.log("  " + white("gmt stash"));
+    console.log("  " + white("gmt smart"));
+    console.log("  " + white("gmt ps origin main"));
+    console.log("  " + white("gmt remote-init"));
+    console.log("");
+    console.log(magenta("For more details, see the README.md."));
+    console.log("  psf             Force push (git push --force)");
+    console.log(
+      "  psfl            Force push with lease (git push --force-with-lease)"
+    );
+    console.log("  psa             Push all branches (git push --all origin)");
+    console.log("  pst             Push all tags (git push --tags)");
+    console.log(
+      "  psd <branch>    Delete remote branch (git push origin --delete <branch>)"
+    );
+    console.log(
+      "  unst <file>, unstage <file>   Unstage a file (git reset HEAD <file>)"
+    );
+    console.log(
+      "  reha, reset-hard              Hard reset to previous commit (git reset --hard HEAD~1)"
+    );
+    console.log(
+      "  rere, reset-recover           Recover from bad reset (git reset --hard ORIG_HEAD)"
+    );
+    console.log(
+      "  quick                 Quick menu for all major git actions (interactive palette)"
+    );
+    console.log(
+      "  cherry-pick, chpi     Interactively cherry-pick commit(s) from any branch"
+    );
+    console.log(
+      "  rebase, rbs           Interactively rebase onto a branch or rebase last N commits"
+    );
+    console.log(
+      "  bisect, bsc           Interactive git bisect wizard (find commit that introduced a bug)"
+    );
+    console.log(
+      "  tag, tg               Interactive tag management (list, create, delete, push tags)"
+    );
   });
 
 // Custom help colors (fix: only use supported hooks)
@@ -325,44 +415,57 @@ program.configureHelp({
 });
 
 // Add extra color to the help description
-program.addHelpText('beforeAll', () =>
-  chalk.bold.green('\nGitMat CLI - Your smart Git companion\n')
+program.addHelpText("beforeAll", () =>
+  chalk.bold.green("\nGitMat CLI - Your smart Git companion\n")
 );
 
 // Custom, colorful help output
 program.helpInformation = function () {
   // Banner
-  const banner = chalk.cyan(figlet.textSync("GitMat", { horizontalLayout: "default" }));
-  const welcome = chalk.bold.magenta("Welcome to GitMat! Your smart Git companion.");
+  const banner = chalk.cyan(
+    figlet.textSync("GitMat", { horizontalLayout: "default" })
+  );
+  const welcome = chalk.bold.magenta(
+    "Welcome to GitMat! Your smart Git companion."
+  );
   const boxed = boxen(`${banner}\n${welcome}`, {
     padding: 1,
     margin: 1,
     borderStyle: "round",
     borderColor: "green",
-    backgroundColor: "#222222"
+    backgroundColor: "#222222",
   });
 
   // Usage
-  const usage = chalk.bold.green("\nUsage: ") + chalk.yellow("gmt [options] [command]");
+  const usage =
+    chalk.bold.green("\nUsage: ") + chalk.yellow("gmt [options] [command]");
 
   // Options
   const optionsHeader = chalk.bold.underline.green("\nOptions:");
-  const options = this.options.map(opt =>
-    "  " +
-    chalk.magenta(opt.flags.padEnd(25)) +
-    chalk.white(opt.description)
-  ).join("\n");
+  const options = this.options
+    .map(
+      (opt) =>
+        "  " +
+        chalk.magenta(opt.flags.padEnd(25)) +
+        chalk.white(opt.description)
+    )
+    .join("\n");
 
   // Commands
   const commandsHeader = chalk.bold.underline.green("\nCommands:");
-  const commands = this.commands.filter(cmd => !cmd._hidden).map(cmd =>
-    "  " +
-    chalk.yellow(cmd.name().padEnd(20)) +
-    chalk.white(cmd.description())
-  ).join("\n");
+  const commands = this.commands
+    .filter((cmd) => !cmd._hidden)
+    .map(
+      (cmd) =>
+        "  " +
+        chalk.yellow(cmd.name().padEnd(20)) +
+        chalk.white(cmd.description())
+    )
+    .join("\n");
 
   // Footer
-  const footer = chalk.gray("\nFor more details, see the README or run ") +
+  const footer =
+    chalk.gray("\nFor more details, see the README or run ") +
     chalk.yellow("gmt <command> --help") +
     chalk.gray(" for command-specific help.\n");
 
@@ -401,10 +504,14 @@ async function runShortcutIfExists() {
     if (args[0] === "gmt") {
       // Run as a Node.js process (cross-platform)
       const { spawnSync } = await import("child_process");
-      const result = spawnSync(process.argv[0], [process.argv[1], ...args.slice(1)], {
-        stdio: "inherit",
-        shell: false,
-      });
+      const result = spawnSync(
+        process.argv[0],
+        [process.argv[1], ...args.slice(1)],
+        {
+          stdio: "inherit",
+          shell: false,
+        }
+      );
       process.exit(result.status || 0);
     } else {
       // Run as a shell command (cross-platform)
@@ -424,30 +531,42 @@ async function runShortcutIfExists() {
 
   if (args.length === 0) {
     // Show banner and a short message
-    const banner = chalk.cyan(figlet.textSync("GitMat", { horizontalLayout: "default" }));
-    const welcome = chalk.bold.magenta("Welcome to GitMat! Your smart Git companion.");
-    const tip = chalk.green("Type ") + chalk.yellow("gmt help") + chalk.green(" to see all commands and options.");
+    const banner = chalk.cyan(
+      figlet.textSync("GitMat", { horizontalLayout: "default" })
+    );
+    const welcome = chalk.bold.magenta(
+      "Welcome to GitMat! Your smart Git companion."
+    );
+    const tip =
+      chalk.green("Type ") +
+      chalk.yellow("gmt help") +
+      chalk.green(" to see all commands and options.");
     const boxed = boxen(`${banner}\n${welcome}\n\n${tip}`, {
       padding: 1,
       margin: 1,
       borderStyle: "round",
       borderColor: "green",
-      backgroundColor: "#222222"
+      backgroundColor: "#222222",
     });
     console.log(boxed + "\n");
     process.exit(0);
   }
 
-  const showBanner = args.length === 1 && (args[0] === '-h' || args[0] === '--help');
+  const showBanner =
+    args.length === 1 && (args[0] === "-h" || args[0] === "--help");
   if (showBanner) {
-    const banner = chalk.cyan(figlet.textSync("GitMat", { horizontalLayout: "default" }));
-    const welcome = chalk.bold.magenta("Welcome to GitMat! Your smart Git companion.");
+    const banner = chalk.cyan(
+      figlet.textSync("GitMat", { horizontalLayout: "default" })
+    );
+    const welcome = chalk.bold.magenta(
+      "Welcome to GitMat! Your smart Git companion."
+    );
     const boxed = boxen(`${banner}\n${welcome}`, {
       padding: 1,
       margin: 1,
       borderStyle: "round",
       borderColor: "green",
-      backgroundColor: "#222222"
+      backgroundColor: "#222222",
     });
     console.log(boxed + "\n");
   }
@@ -455,7 +574,7 @@ async function runShortcutIfExists() {
   try {
     await program.parseAsync(process.argv);
   } catch (err) {
-    if (err.code === 'commander.version' || err.code === 'commander.help') {
+    if (err.code === "commander.version" || err.code === "commander.help") {
       process.exit(0);
     }
     throw err;
