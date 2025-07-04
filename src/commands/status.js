@@ -2,8 +2,8 @@ import boxen from "boxen";
 import chalk from "chalk";
 import figlet from "figlet";
 import simpleGit from "simple-git";
-import { isGitRepo } from "./utils.js";
 import history from "./history.js";
+import { isGitRepo } from "./utils.js";
 let inquirer;
 async function getInquirer() {
   if (!inquirer) inquirer = (await import("inquirer")).default;
@@ -25,7 +25,21 @@ async function getUndoCmd() {
 
 export default async function status() {
   if (!isGitRepo()) {
-    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    console.error(
+      boxen(
+        chalk.red.bold(
+          "Error: Not a git repository.\nPlease run this command inside a git project."
+        ),
+        {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "red",
+          margin: 1,
+          title: "GitMat Error",
+          titleAlignment: "center",
+        }
+      )
+    );
     process.exit(1);
   }
   const prettyMs = (await import("pretty-ms")).default;
@@ -53,7 +67,8 @@ export default async function status() {
   }
   output += "\n";
   output +=
-    chalk.yellow(`Ahead: ${gitStatus.ahead}, Behind: ${gitStatus.behind}`) + "\n";
+    chalk.yellow(`Ahead: ${gitStatus.ahead}, Behind: ${gitStatus.behind}`) +
+    "\n";
 
   // Last commit info
   if (log.latest) {
@@ -74,13 +89,15 @@ export default async function status() {
 
   // Staged files
   if (gitStatus.staged.length > 0) {
-    output += chalk.green("Staged files: ") + gitStatus.staged.join(", ") + "\n";
+    output +=
+      chalk.green("Staged files: ") + gitStatus.staged.join(", ") + "\n";
   } else {
     output += chalk.green("Staged files: ") + "None\n";
   }
   // Changed files
   if (gitStatus.modified.length > 0) {
-    output += chalk.red("Changed files: ") + gitStatus.modified.join(", ") + "\n";
+    output +=
+      chalk.red("Changed files: ") + gitStatus.modified.join(", ") + "\n";
   } else {
     output += chalk.red("Changed files: ") + "None\n";
   }
@@ -112,7 +129,10 @@ export default async function status() {
   if (gitStatus.staged.length > 0) {
     next.push({ name: "Commit staged files", value: "save" });
     next.push({ name: "Unstage files", value: "unstage" });
-    next.push({ name: "Discard staged changes (reset)", value: "reset-staged" });
+    next.push({
+      name: "Discard staged changes (reset)",
+      value: "reset-staged",
+    });
   }
   // Modified (unstaged) files
   if (gitStatus.modified.length > 0) {
@@ -123,12 +143,18 @@ export default async function status() {
   if (gitStatus.not_added.length > 0) {
     next.push({ name: "Add untracked files", value: "add-untracked" });
     next.push({ name: "Ignore file(s) (.gitignore)", value: "ignore-files" });
-    next.push({ name: "Remove untracked files (clean)", value: "clean-untracked" });
+    next.push({
+      name: "Remove untracked files (clean)",
+      value: "clean-untracked",
+    });
   }
   // Stashes
   if (stashes.all.length > 0) {
     next.push({ name: "Apply latest stash", value: "apply-stash" });
-    next.push({ name: "Manage stashes (list/apply/drop)", value: "manage-stash" });
+    next.push({
+      name: "Manage stashes (list/apply/drop)",
+      value: "manage-stash",
+    });
   }
   // Commits ahead/behind
   if (gitStatus.ahead > 0) {
@@ -151,7 +177,10 @@ export default async function status() {
   // Undo/Redo
   const lastAction = history.getLastAction();
   if (lastAction || (log.total && log.total > 1)) {
-    next.push({ name: "Undo (soft reset last commit or tracked action)", value: "undo" });
+    next.push({
+      name: "Undo (soft reset last commit or tracked action)",
+      value: "undo",
+    });
   }
   // Log and status always available
   next.push({ name: "View log (commit history)", value: "log" });
@@ -217,7 +246,8 @@ export default async function status() {
         {
           type: "confirm",
           name: "confirm",
-          message: "Are you sure you want to discard all staged changes? This cannot be undone!",
+          message:
+            "Are you sure you want to discard all staged changes? This cannot be undone!",
           default: false,
         },
       ]);
@@ -228,7 +258,14 @@ export default async function status() {
     } else if (action === "stage-all") {
       // Stage all changes
       await git.add(".");
-      console.log(boxen(chalk.green("✔ All changes staged."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+      console.log(
+        boxen(chalk.green("✔ All changes staged."), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "green",
+          margin: 1,
+        })
+      );
       return await status();
     } else if (action === "discard-changes") {
       // Discard all unstaged changes
@@ -236,18 +273,33 @@ export default async function status() {
         {
           type: "confirm",
           name: "confirm",
-          message: "Are you sure you want to discard all unstaged changes? This cannot be undone!",
+          message:
+            "Are you sure you want to discard all unstaged changes? This cannot be undone!",
           default: false,
         },
       ]);
       if (!confirm) return await status();
       await git.checkout(["--", "."]);
-      console.log(boxen(chalk.green("✔ All unstaged changes discarded."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+      console.log(
+        boxen(chalk.green("✔ All unstaged changes discarded."), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "green",
+          margin: 1,
+        })
+      );
       return await status();
     } else if (action === "add-untracked") {
       // Add all untracked files
       await git.add(gitStatus.not_added);
-      console.log(boxen(chalk.green("✔ Untracked files added."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+      console.log(
+        boxen(chalk.green("✔ Untracked files added."), {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "green",
+          margin: 1,
+        })
+      );
       return await status();
     } else if (action === "ignore-files") {
       // Open rc-edit for .gitignore
@@ -263,7 +315,14 @@ export default async function status() {
       // Apply latest stash
       if (stashes.all.length > 0) {
         await git.stash(["pop"]);
-        console.log(boxen(chalk.green("✔ Latest stash applied."), { padding: 1, borderStyle: "round", borderColor: "green", margin: 1 }));
+        console.log(
+          boxen(chalk.green("✔ Latest stash applied."), {
+            padding: 1,
+            borderStyle: "round",
+            borderColor: "green",
+            margin: 1,
+          })
+        );
       }
       return await status();
     } else if (action === "manage-stash") {
@@ -272,7 +331,9 @@ export default async function status() {
       await stashCmd();
       return await status();
     } else if (action === "push") {
-      await (await getPushCmd())();
+      await (
+        await getPushCmd()
+      )();
       return await status();
     } else if (action === "push-all") {
       const psaCmd = (await import("./psa.js")).default;
@@ -299,7 +360,9 @@ export default async function status() {
       await mergeCmd();
       return await status();
     } else if (action === "undo") {
-      await (await getUndoCmd())();
+      await (
+        await getUndoCmd()
+      )();
       return await status();
     } else if (action === "log") {
       const logCmd = await getLogCmd();

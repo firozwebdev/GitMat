@@ -31,7 +31,9 @@ async function getInquirer() {
 
 export default async function quick() {
   if (!isGitRepo()) {
-    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    console.error(
+      "\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m"
+    );
     process.exit(1);
   }
   const git = simpleGit();
@@ -42,7 +44,7 @@ export default async function quick() {
 
   // Banner
   const banner = chalk.cyan(
-    figlet.textSync("GitMate", { horizontalLayout: "default", width: 60 })
+    figlet.textSync("GitMat", { horizontalLayout: "default", width: 60 })
   );
   console.log(banner);
 

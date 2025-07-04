@@ -15,7 +15,21 @@ async function getHistory() {
 }
 export default async function mergeCommand(targetBranch) {
   if (!isGitRepo()) {
-    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    console.error(
+      boxen(
+        chalk.red.bold(
+          "Error: Not a git repository.\nPlease run this command inside a git project."
+        ),
+        {
+          padding: 1,
+          borderStyle: "round",
+          borderColor: "red",
+          margin: 1,
+          title: "GitMat Error",
+          titleAlignment: "center",
+        }
+      )
+    );
     process.exit(1);
   }
   const git = simpleGit();

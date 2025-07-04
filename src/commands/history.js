@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 function getHistoryPath() {
-  return path.resolve(process.cwd(), ".gitmate-history.json");
+  return path.resolve(process.cwd(), ".gitmat-history.json");
 }
 
 function readHistory() {
