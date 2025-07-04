@@ -8,10 +8,10 @@ async function getExec() {
   return exec;
 }
 export default async function shortcut(cmd, args) {
-  const rcPath = path.resolve(process.cwd(), ".gitmaterc");
+  const rcPath = path.resolve(process.cwd(), ".gitmatrc");
   if (!fs.existsSync(rcPath)) {
     console.error(
-      boxen(chalk.red(".gitmaterc not found in this directory."), {
+      boxen(chalk.red(".gitmatrc not found in this directory."), {
         padding: 1,
         borderStyle: "round",
         borderColor: "red",
@@ -25,7 +25,7 @@ export default async function shortcut(cmd, args) {
     config = JSON.parse(fs.readFileSync(rcPath, "utf8"));
   } catch (err) {
     console.error(
-      boxen(chalk.red("Error parsing .gitmaterc: ") + err.message, {
+      boxen(chalk.red("Error parsing .gitmatrc: ") + err.message, {
         padding: 1,
         borderStyle: "round",
         borderColor: "red",
@@ -37,7 +37,7 @@ export default async function shortcut(cmd, args) {
   const shortcuts = config.shortcuts || {};
   if (!shortcuts[cmd]) {
     console.error(
-      boxen(chalk.red(`Shortcut '${cmd}' not found in .gitmaterc.`), {
+      boxen(chalk.red(`Shortcut '${cmd}' not found in .gitmatrc.`), {
         padding: 1,
         borderStyle: "round",
         borderColor: "red",

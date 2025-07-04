@@ -10,7 +10,9 @@ async function getInquirer() {
 }
 export default async function stash() {
   if (!isGitRepo()) {
-    console.error("\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m");
+    console.error(
+      "\x1b[31mError: Not a git repository. Please run this command inside a git project.\x1b[0m"
+    );
     process.exit(1);
   }
   const git = simpleGit();
@@ -29,7 +31,7 @@ export default async function stash() {
             borderStyle: "round",
             borderColor: "cyan",
             margin: 1,
-            title: "GitMate Stash",
+            title: "GitMat Stash",
             titleAlignment: "center",
           }
         ),

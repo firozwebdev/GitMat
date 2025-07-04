@@ -129,7 +129,7 @@ program
 
 program
   .command("rc-edit")
-  .description("Create or edit .gitmaterc shortcuts interactively")
+  .description("Create or edit .gitmatrc shortcuts interactively")
   .action(rcEdit);
 
 program
@@ -270,7 +270,7 @@ program
   .command("help")
   .description("Show detailed help and usage for all commands")
   .action(() => {
-    const banner = figlet.textSync("GitMate", {
+    const banner = figlet.textSync("GitMat", {
       horizontalLayout: "default",
       width: 60,
     });
@@ -350,9 +350,9 @@ program
     console.log(green("Other:"));
     console.log("  " + cyan("help") + "                Show this help message");
     console.log(
-      "  rc-edit          Create or edit .gitmaterc shortcuts interactively"
+      "  rc-edit          Create or edit .gitmatrc shortcuts interactively"
     );
-    console.log("  <shortcut>       Run a custom shortcut from .gitmaterc");
+    console.log("  <shortcut>       Run a custom shortcut from .gitmatrc");
     console.log(
       "  l, log                Pretty, colorized, paginated git log with commit details"
     );
@@ -488,7 +488,7 @@ function parseArgs(str) {
 }
 
 async function runShortcutIfExists() {
-  const rcPath = path.resolve(process.cwd(), ".gitmaterc");
+  const rcPath = path.resolve(process.cwd(), ".gitmatrc");
   if (!fs.existsSync(rcPath)) return false;
   let config;
   try {

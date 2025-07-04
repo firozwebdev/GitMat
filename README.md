@@ -212,7 +212,7 @@ To use `gmt` as a shortcut for `gitmat` on any OS, this project provides two scr
 .gitignore
 README.md
 bin/
-  gitmate.js         # CLI entry point
+  gitmat.js         # CLI entry point
   gmt                # Unix shortcut script
   gmt.cmd            # Windows shortcut script
 src/

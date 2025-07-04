@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --no-warnings ./bin/gitmate.js",
-    "help": "node --no-warnings ./bin/gitmate.js help",
+    "start": "node --no-warnings ./bin/gitmat.js",
+    "help": "node --no-warnings ./bin/gitmat.js help",
     "rc-edit": "tsx bin/rc-edit.jsx"
   },
   "keywords": [
@@ -23,9 +23,9 @@
   "license": "ISC",
   "description": "",
   "bin": {
-    "gitmat": "./bin/gitmate.js",
-    "gmt": "./bin/gitmate.js",
-    "gt": "./bin/gitmate.js",
+    "gitmat": "./bin/gitmat.js",
+    "gmt": "./bin/gitmat.js",
+    "gt": "./bin/gitmat.js",
     "rc-edit": "./bin/rc-edit"
   },
   "dependencies": {
