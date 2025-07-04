@@ -1,6 +1,6 @@
 {
   "shortcuts": {
     "message": "git status",
-    "test": "gmt log"
+    "test": "gmt status"
   }
 }
