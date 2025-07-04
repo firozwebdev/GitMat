@@ -1,21 +1,25 @@
 # GitMat
 
 [![npm version](https://img.shields.io/npm/v/gitmat.svg?style=flat)](https://www.npmjs.com/package/gitmat)
+[View on npm](https://www.npmjs.com/package/gitmat)
 
-## 🚀 Installation (Global)
+## 🚀 Installation (Recommended: Global via npm)
 
-Install GitMat globally via npm:
+Install from the official npm registry: [https://www.npmjs.com/package/gitmat](https://www.npmjs.com/package/gitmat)
+
+Install GitMat globally using npm (recommended for most users):
 
 ```sh
 npm install -g gitmat
 ```
 
 After installation, you can use the following commands anywhere:
+
 - `gitmat` (main command)
 - `gm` (alias)
 - `gmt` (alias, recommended for speed)
 
-> **Tip:** For faster usage, set up a `gmt` alias for `gitmat` in your terminal! See below for how to make it permanent.
+> **Note:** If you previously installed GitMat locally (e.g., via `npm link` or by copying files to your PATH), please uninstall or remove those versions to avoid conflicts. Only the global npm installation is supported for production use.
 
 Your smart Git companion – making Git easier, faster, and more human-friendly.
 
@@ -175,18 +179,22 @@ package.json         # Project manifest
 
 ---
 
-## ⚙️ Setup
+## ⚙️ Development (Local Setup)
+
+> **For contributors and advanced users only.**
 
 1. **Install dependencies:**
    ```bash
    npm install
    ```
-2. **Link the CLI for local use:**
+2. **Link the CLI for local development:**
    ```bash
    npm link
    ```
-3. **(Optional) Set up alias for easier use:**
-   See above for alias instructions.
+   This will make your local version available as `gitmat`, `gm`, and `gmt` in your terminal. Be sure to unlink when done to avoid conflicts with the global version:
+   ```bash
+   npm unlink -g
+   ```
 
 ---
 
