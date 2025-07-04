@@ -433,7 +433,6 @@ program.helpInformation = function () {
     margin: 1,
     borderStyle: "round",
     borderColor: "green",
-    backgroundColor: "#222222",
   });
 
   // Usage
@@ -545,8 +544,7 @@ async function runShortcutIfExists() {
       padding: 1,
       margin: 1,
       borderStyle: "round",
-      borderColor: "green",
-      backgroundColor: "#222222",
+      borderColor: "cyan",
     });
     console.log(boxed + "\n");
     process.exit(0);
@@ -565,8 +563,7 @@ async function runShortcutIfExists() {
       padding: 1,
       margin: 1,
       borderStyle: "round",
-      borderColor: "green",
-      backgroundColor: "#222222",
+      borderColor: "cyan",
     });
     console.log(boxed + "\n");
   }
