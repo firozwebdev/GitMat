@@ -163,7 +163,7 @@ const commands = [
   { command: "ldi", description: "Show git log -p (log with diffs)" },
 ];
 
-const rcPath = path.resolve(process.cwd(), ".gitmaterc");
+const rcPath = path.resolve(process.cwd(), ".gitmatrc");
 function loadShortcuts() {
   if (fs.existsSync(rcPath)) {
     try {
@@ -194,7 +194,7 @@ const MainMenu = ({ onSelect }) => {
   });
   return (
     <Box flexDirection="column">
-      <Text bold>What would you like to do with .gitmaterc?</Text>
+      <Text bold>What would you like to do with .gitmatrc?</Text>
       {options.map((opt, i) => (
         <Text key={opt} color={i === selected ? "cyan" : undefined}>
           {i === selected ? "> " : "  "}

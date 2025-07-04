@@ -7,6 +7,7 @@ import figlet from "figlet";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import os from "os";
 
 // Command imports (to be implemented)
 import bisect from "../src/commands/bisect.js";
@@ -486,22 +487,34 @@ function parseArgs(str) {
   return arr;
 }
 
-async function runShortcutIfExists() {
-  const rcPath = path.resolve(process.cwd(), ".gitmatrc");
-  if (!fs.existsSync(rcPath)) return false;
-  let config;
-  try {
-    config = JSON.parse(fs.readFileSync(rcPath, "utf8"));
-  } catch {
-    return false;
+function loadShortcuts() {
+  let shortcuts = {};
+  // Load from home directory
+  const homeRc = path.resolve(os.homedir(), ".gitmatrc");
+  if (fs.existsSync(homeRc)) {
+    try {
+      const config = JSON.parse(fs.readFileSync(homeRc, "utf8"));
+      Object.assign(shortcuts, config.shortcuts || {});
+    } catch {}
   }
-  const shortcuts = config.shortcuts || {};
-  const userArg = process.argv[2];
-  if (userArg && shortcuts[userArg]) {
-    const shortcutCmd = shortcuts[userArg];
+  // Load from current directory (overrides home)
+  const localRc = path.resolve(process.cwd(), ".gitmatrc");
+  if (fs.existsSync(localRc)) {
+    try {
+      const config = JSON.parse(fs.readFileSync(localRc, "utf8"));
+      Object.assign(shortcuts, config.shortcuts || {});
+    } catch {}
+  }
+  return shortcuts;
+}
+
+async function runShortcutIfExists() {
+  const shortcuts = loadShortcuts();
+  const userArgs = process.argv.slice(2);
+  if (userArgs.length > 0 && shortcuts[userArgs[0]]) {
+    const shortcutCmd = shortcuts[userArgs[0]];
     const args = parseArgs(shortcutCmd);
-    if (args[0] === "gmt") {
-      // Run as a Node.js process (cross-platform)
+    if (args[0] === "gmt" || args[0] === "gt" || args[0] === "gitmat") {
       const { spawnSync } = await import("child_process");
       const result = spawnSync(
         process.argv[0],
@@ -513,7 +526,6 @@ async function runShortcutIfExists() {
       );
       process.exit(result.status || 0);
     } else {
-      // Run as a shell command (cross-platform)
       const { spawnSync } = await import("child_process");
       const result = spawnSync(shortcutCmd, { stdio: "inherit", shell: true });
       process.exit(result.status || 0);

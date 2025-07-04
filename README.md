@@ -21,6 +21,10 @@ After installation, you can use **any** of the following commands anywhere:
 
 > **Note:** On Windows, a batch alias is used for `gitmat` to ensure it always works, even if npm shims have issues. All three commands are official and fully supported.
 
+## Installation
+
+All dependencies, including `tsx`, are installed automatically when you install this package globally or locally. No manual setup is required for `tsx`.
+
 ---
 
 ## 🧩 Overview

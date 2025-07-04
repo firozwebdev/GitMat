@@ -41,10 +41,10 @@
     "ora": "^8.2.0",
     "pretty-ms": "^9.2.0",
     "react": "^16.14.0",
-    "simple-git": "^3.28.0"
+    "simple-git": "^3.28.0",
+    "tsx": "^4.20.3"
   },
   "type": "module",
   "devDependencies": {
-    "tsx": "^4.20.3"
   }
 }
